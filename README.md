@@ -41,16 +41,4 @@ npm run preview
 
 Visit [http://localhost:4173/](http://localhost:4173/)
 
-### Deploy to GitHub pages
-
-If you forked this repository, then you can publish your changes to GitHub pages.
-
-```bash
-npm run deploy
-```
-
-Visit `https://<your github username>.github.io/Three.js-Boilerplate-TS-Vite/`
-
-E.g.,
-
 [https://sean-bradley.github.io/Three.js-Boilerplate-TS-Vite/](https://sean-bradley.github.io/Three.js-Boilerplate-TS-Vite/)

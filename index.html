@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Shimada Web3d</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Shimada Web3d"/>
+    <meta name="keywords" content="島田匠悟, 島田 匠悟, 島田, 匠悟, しまだ, しょうご, Shogo Shimada, Shogo, Shimada"/>
+    <link rel="apple-touch-icon" href="../images/HMDIcon.png"/>
+    <link type="image/png" sizes="16x16" rel="icon" href="../images/HMDIcon.png">
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://kit.fontawesome.com/23eec9262a.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap">
+  </head>
+  <body>
+    <div id="app">
+      <canvas id="canvasContainer"></canvas>
+      <div class="header">しまだのWeb3D</div>
+        <div class="tabs">
+            <div class="tab" id="tab0" data-position-x="x0" data-position-y="y0" data-position-z="z0" data-rotation-x="rx0" data-rotation-y="ry0" data-rotation-z="rz0">Profile</div>
+            <div class="tab" id="tab1" data-position-x="x1" data-position-y="y1" data-position-z="z1" data-rotation-x="rx1" data-rotation-y="ry1" data-rotation-z="rz1">Experience</div>
+            <div class="tab" id="tab2" data-position-x="x2" data-position-y="y2" data-position-z="z2" data-rotation-x="rx2" data-rotation-y="ry2" data-rotation-z="rz2">Education</div>
+            <div class="tab" id="tab3" data-position-x="x3" data-position-y="y3" data-position-z="z3" data-rotation-x="rx3" data-rotation-y="ry3" data-rotation-z="rz3">Publication</div>
+            <div class="tab" id="tab4" data-position-x="x4" data-position-y="y4" data-position-z="z4" data-rotation-x="rx4" data-rotation-y="ry4" data-rotation-z="rz4">Link</div>
+        </div>
+        <div class="overlay" id="overlay">
+        <div class="content-container">
+            <div class="content">
+            <button class="close-button" id="close-button">&times;</button>
+            <div id="content0" class="content-item">
+                <h1>Profile</h1>
+                <h2>Shogo SHIMADA</h2><br>
+                <p>修士（情報科学）</p>
+                <p>Master of Computer Science.</p><br>
+                <p>生まれ -> 1999年 神奈川県</p><br>
+                <p>大学[院]にて、VR×人間情報学の分野で研究をやってました。<br>ネットワークと3Dモデリングの知識が欲しい。</p>
+                <div class="nav">
+                    <button class="prev-button">Prev</button>
+                    <button class="next-button">Next</button>
+                </div>
+            </div>
+            
+            <div id="content1" class="content-item">
+                <h1>Experience</h1>
+                <div class="accordion">
+                    <div class="accordion-header">
+                        <h3>株式会社Techouse</h3>
+                        <span class="accordion-toggle">&#9650;</span>
+                    </div>
+                    <div class="accordion-content">
+                        <p>2022/6 ~ 2022/10</p>
+                        <p>TypeScript(React)を用いたフロントエンドのエンジニアインターンをしていました。</p>
+                    </div>
+                </div>
+
+                <div class="accordion">
+                    <div class="accordion-header">
+                        <h3>研究補助 臨時職員</h3>
+                        <span class="accordion-toggle">&#9650;</span>
+                    </div>
+                    <div class="accordion-content">
+                        <p>2022/6 ~ 2022/7</p>
+                        <p>東京都立大学 情報科学域 ヤェムヴィボル助教の研究補助アルバイトをしていました。<br>
+                            業務内容：ロボットアームを用いた遠隔作業システムの開発。</p>
+                    </div>
+                </div>
+
+                <div class="accordion">
+                    <div class="accordion-header">
+                        <h3>リサーチアシスタント(RA): 第一次</h3>
+                        <span class="accordion-toggle">&#9650;</span>
+                    </div>
+                    <div class="accordion-content">
+                        <p>2022/8 ~ 2023/2</p>
+                        <p>東京都立大学 情報科学域 ヤェムヴィボル助教のバーチャルリアリティに関する研究開発のアシスタントをしていました。<br>
+                        業務内容：ロボットアームを用いた遠隔作業システムの開発、Cybersickness検出手法の探求。</p>
+                    </div>
+                </div>
+
+                <div class="accordion">
+                    <div class="accordion-header">
+                        <h3>株式会社テレビ東京</h3>
+                        <span class="accordion-toggle">&#9650;</span>
+                    </div>
+                    <div class="accordion-content">
+                        <p>2022/12</p>
+                        <p>Tech & DX部門の冬季インターンシップに参加しました。</p>
+                    </div>
+                </div>
+
+                <div class="accordion">
+                    <div class="accordion-header">
+                        <h3>リサーチアシスタント(RA): 第二次</h3>
+                        <span class="accordion-toggle">&#9650;</span>
+                    </div>
+                    <div class="accordion-content">
+                        <p>2023/5 ~ 2024/3</p>
+                        <p>筑波大学 システム情報系 ヤェムヴィボル准教授のバーチャルリアリティに関する研究開発のアシスタントをしていました。</p>
+                    </div>
+                </div>
+
+                <div class="accordion">
+                    <div class="accordion-header">
+                        <h3>Biometrics - intelligent solutions in Poland</h3>
+                        <span class="accordion-toggle">&#9650;</span>
+                    </div>
+                    <div class="accordion-content">
+                        <p>2023/6/26 ~ 2023/7/8</p>
+                        <p>I joined “International Summer School: Biometrics - intelligent solutions at Białystok University of Technology, Poland.” (The project was implemented within the SPINAKER programme - international intensive programmes run by the polish national agency for academic exchange(NAWA). It provided for the organization of a summer school - “Biometrics - intelligent solutions”.)</p>
+                    </div>
+                </div>
+
+                <div class="accordion">
+                    <div class="accordion-header">
+                        <h3>K</h3>
+                        <span class="accordion-toggle">&#9650;</span>
+                    </div>
+                    <div class="accordion-content">
+                        <p>2024/4 ~ current</p>
+                        <p>研修中。</p>
+                    </div>
+                </div>
+
+                <div class="nav">
+                    <button class="prev-button">Prev</button>
+                    <button class="next-button">Next</button>
+                </div>
+            </div>
+
+            <div id="content2" class="content-item">
+                <h1>Education</h1>
+                <table class="table">
+                    <tr>
+                        <td>2018/3</td><td>神奈川県立 相模原高等学校 卒業</td>
+                    </tr>
+                    <tr>
+                        <td>2018/4</td><td>首都大学東京 システムデザイン学部 情報科学科 入学</td>
+                    </tr>
+                    <tr>
+                        <td>2022/3</td><td>東京都立大学 システムデザイン学部 情報科学科 卒業</td>
+                    </tr>
+                    <tr>
+                        <td>2022/4</td><td>東京都立大学大学院 システムデザイン研究科 情報科学域 入学</td>
+                    </tr>
+                    <tr>
+                        <td>2024/3</td><td>東京都立大学大学院 システムデザイン研究科 情報科学域 修士課程終了</td>
+                    </tr>
+                </table>
+                <div class="nav">
+                    <button class="prev-button">Prev</button>
+                    <button class="next-button">Next</button>
+                </div>
+            </div>
+            
+            <div id="content3" class="content-item">
+            <h1>Publication</h1>
+            <table class="table">
+                <tr>
+                <th>Journal article（学術論文）</th>
+                </tr>
+                <tr>
+                <td>S. Shimada, P. Pannattee, Y. Ikei, N. Nishiuchi and V. Yem, "High-frequency cybersickness prediction using deep learning techniques with eye-related indices," in IEEE Access, vol. 11, pp. 95825-95839, 2023. <a href="https://ieeexplore.ieee.org/document/10239343" target="_blank">doi:10.1109/ACCESS.2023.3312216</a> <span class="label review-yes">査読あり</span></td>
+                </tr>
+                <tr>
+                <th>Conference papers（学会論文）</th>
+                </tr>
+                <tr>
+                <td>小島優希也, 島田匠悟, 岡本正吾, ヤェムヴィボル, 池井寧. "遠隔ロボットの多重身体性に関する研究," 映情学技報, vol. 48, no. 12, pp. 57-60, Mar 15, 2024. <span class="label review-none">査読なし</span></td>
+                </tr>
+                <tr>
+                <td>P. Pannattee, S. Shimada, V. Yem and N. Nishiuchi. "Investigating the use of machine learning methods for levels of sense of presence classification based on eye tracking data," Computer Information Systems and Industrial Management (CISIM), Springer, Cham, vol. 14164, 2023. <span class="label review-yes">査読あり</span> </td>
+                </tr>
+                <tr></td>
+                </tr>
+                <tr>
+                <td>島田匠悟, 小島優希也, 西内信之, 池井寧, YEM VIBOL. "テレプレゼンスのためのLeaning型ロコモーションと歩行感覚提示の検討," 第28回日本バーチャルリアリティ学会大会（VRSJ2023）, Sep 12-14, 2023, Tokyo, Japan. <span class="label review-none">査読なし</span> </td>
+                </tr>
+                <tr>
+                <td>小島優希也, 島田匠悟, YEM VIBOL, 岡本正吾, 池井寧. "複数のテレプレゼンスロボットを用いた２重身体感覚に関する研究," 第28回日本バーチャルリアリティ学会大会（VRSJ2023）, Sep 12-14, 2023, Tokyo, Japan. <span class="label review-none">査読なし</span> </td>
+                </tr>
+                <tr>
+                <td>S. Shimada, Y. Ikei, N. Nishiuchi and V. Yem. "Study of cybersickness prediction in real time using eye tracking data," IEEE Conference on Virtual Reality and 3D User Interfaces (IEEE VR), March 25-29, 2023, Shanghai, China. <span class="label review-yes">査読あり</span> </td>
+                </tr>
+                <tr>
+                <td>S. Shimada, Y. Ojima, Y. Kikuchi, Y. Ikei and V. Yem. "Comparative evaluation of joystick and leaning-based locomotion in immersive telepresence with body motion feedback," Association for Computing Machinery, Augmented Humans (ACM AHs), March 12-14, 2023, Glasgow, UK. <span class="label review-yes">査読あり</span></td>
+                </tr>
+                <tr>
+                <td>島田匠悟, 西内信之. "VR空間におけるドラッグ&ドロップ操作のインタフェース評価に関する研究," 日本人間工学会 第63回大会, July 30-31, 2022, Hiroshima, Japan. <span class="label review-none">査読なし</span></td>
+                </tr>
+                <tr>
+                <th>Demo exhibition（デモ展示）</th>
+                </tr>
+                <tr>
+                <td>小島優希也, 島田匠悟, 米田悠人, 芹澤尚舜, 西内信之, 池井寧, YEM VIBOL. "複数リアル空間を体験するXRメタバース", 第28回日本バーチャルリアリティ学会大会（VRSJ2023）, Sep 12-14, 2023, Tokyo, Japan.</td>
+                </tr>
+                <tr>
+                <td>東京都立大学, 筑波大学, 東京大学. "複数の実空間のVR歩行体験とマルチ視聴が可能なXRメタバース," URCF（超臨場感コミュニケーション産学官フォーラム）シンポジウム 2023, Aug 30, 2023, Tokyo, Japan.</td>
+                </tr>
+                <tr>
+                <td>V. Yem, Y. Ojima, S. Shimada and Y. Ikei. "Real time multispace experience," Laval Virtual 2023, April 12-16, 2023, Laval, France.</td>
+                </tr>
+            </table>
+            <div class="nav">
+                <button class="prev-button">Prev</button>
+                <button class="next-button">Next</button>
+            </div>
+            </div>
+            
+            <div id="content4" class="content-item">
+                <h1>Link</h1>
+                <!-- <div class="icon-container">
+                    <a href="https://www.instagram.com/shwg_2.0.929/" target="_blank"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://x.com/shwg_360" target="_blank"><i class="fa-brands fa-x-twitter"></i></a>
+                    <a href="https://github.com/shwg8986" target="_blank"><i class="fa-brands fa-github"></i></a>
+                    <a href="https://oncyber.io/shwgallery_" target="_blank"><i class="fa-solid fa-cube"></i></a>
+                </div> -->
+                <div class="icon-container">
+              <a href="https://www.instagram.com/shwg_2.0.929/" target="_blank">
+                <i class="fa-brands fa-instagram"></i> <span>Instagram</span>
+              </a>
+              <a href="https://x.com/shwg_360" target="_blank">
+                <i class="fa-brands fa-x-twitter"></i> <span>X (Twitter)</span>
+              </a>
+              <a href="https://github.com/shwg8986" target="_blank">
+                <i class="fa-brands fa-github"></i> <span>Github</span>
+              </a>
+              <a href="https://oncyber.io/shwgallery_" target="_blank">
+                <i class="fa-solid fa-cube"></i> <span>OnCyber</span>
+              </a>
+            </div>
+                <div class="nav">
+                    <button class="prev-button">Prev</button>
+                    <button class="next-button">Next</button>
+                </div>
+            </div>
+
+            </div>  
+        </div>
+        </div>
+    <div id="joystickContainer"></div>
+    </div>
+    
+    <script type="module" src="/src/main.ts"></script>
+
+    <!-- <script type="module" src="/src/main_backup.ts"></script> -->
+  </body>
+</html>

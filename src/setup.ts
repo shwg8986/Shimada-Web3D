@@ -64,7 +64,7 @@ export function setupWater() {
     textureWidth: 512,
     textureHeight: 512,
     waterNormals: new THREE.TextureLoader().load(
-      "textures/waternormals.jpg",
+      new URL("../textures/waternormals.jpg", import.meta.url).toString(),
       (texture) => {
         texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
       }

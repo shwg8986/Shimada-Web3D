@@ -86,6 +86,10 @@ body {
   display: block;
 }
 
+.content-item table {
+  width: 100%;
+}
+
 #content1 h3,
 p {
   font-size: 16px;

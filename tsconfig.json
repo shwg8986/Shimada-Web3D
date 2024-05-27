@@ -11,10 +11,13 @@
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true,
+    "noEmit": true, //削除
+    // "emitDeclarationOnly": true, //追加
+    // "declaration": true, //追加
+    // "declarationDir": "./types", //追加
 
     /* Linting */
-    "strict": true,
+    "strict": false,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true

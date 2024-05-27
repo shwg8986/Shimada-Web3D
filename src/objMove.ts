@@ -1,4 +1,4 @@
-import * as THREE from "three";
+import { Mesh, Vector3, SphereGeometry } from "three";
 import { PointerLockControls } from "three/addons/controls/PointerLockControls.js";
 import {
   moveForward,
@@ -39,8 +39,8 @@ export function updateCameraControls(controls: PointerLockControls) {
 
 // ビデオ球体の位置を更新する関数
 export function updateVideoSpheres(
-  spheres: THREE.Mesh[],
-  initialPositions: THREE.Vector3[],
+  spheres: Mesh[],
+  initialPositions: Vector3[],
   elapsedTime: number,
   amplitude: number,
   frequency: number
@@ -68,8 +68,7 @@ export function updateVideoSpheres(
     if (!isInsideSphere) {
       sphere.position.y = initialPosition.y + yOffset;
       if (sphere.userData.metalBox) {
-        const radius = (sphere.geometry as THREE.SphereGeometry).parameters
-          .radius;
+        const radius = (sphere.geometry as SphereGeometry).parameters.radius;
         sphere.userData.metalBox.position.set(
           initialPosition.x,
           initialPosition.y - radius - 2 + yOffset,
@@ -104,8 +103,8 @@ export function updateVideoSpheres(
 
 // 画像球体の位置を更新する関数
 export function updateImageSpheres(
-  spheres: THREE.Mesh[],
-  initialPositions: THREE.Vector3[],
+  spheres: Mesh[],
+  initialPositions: Vector3[],
   elapsedTime: number,
   amplitude: number,
   frequency: number
@@ -121,8 +120,7 @@ export function updateImageSpheres(
     if (!isInsideSphere) {
       sphere.position.y = initialPosition.y + yOffset;
       if (sphere.userData.metalBox) {
-        const radius = (sphere.geometry as THREE.SphereGeometry).parameters
-          .radius;
+        const radius = (sphere.geometry as SphereGeometry).parameters.radius;
         sphere.userData.metalBox.position.set(
           initialPosition.x,
           initialPosition.y - radius - 2 + yOffset,

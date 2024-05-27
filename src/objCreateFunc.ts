@@ -1,4 +1,22 @@
-import * as THREE from "three";
+import {
+  Group,
+  Mesh,
+  Vector3,
+  Euler,
+  VideoTexture,
+  ShaderMaterial,
+  BackSide,
+  DoubleSide,
+  PlaneGeometry,
+  CanvasTexture,
+  MeshBasicMaterial,
+  LinearFilter,
+  RGBAFormat,
+  SphereGeometry,
+  TextureLoader,
+  BoxGeometry,
+  MeshStandardMaterial,
+} from "three";
 import { TextGeometry } from "three/addons/geometries/TextGeometry.js";
 import { vertexShader_2d, fragmentShader_2d } from "../shaders/shader_2d.ts";
 import { vertexShader_3d, fragmentShader_3d } from "../shaders/shader_3d.ts";
@@ -6,14 +24,14 @@ import { FBXLoader } from "three/addons/loaders/FBXLoader.js";
 import { Font } from "three/addons/loaders/FontLoader.js";
 import { scene } from "./setup.ts";
 
-let drone1: THREE.Group;
-let drone2: THREE.Group;
+let drone1: Group;
+let drone2: Group;
 
-const tabObjects: THREE.Mesh[] = [];
-const videoSpheres: THREE.Mesh[] = [];
-const videoInitialPositions: THREE.Vector3[] = [];
-const imageSpheres: THREE.Mesh[] = [];
-const imageInitialPositions: THREE.Vector3[] = [];
+const tabObjects: Mesh[] = [];
+const videoSpheres: Mesh[] = [];
+const videoInitialPositions: Vector3[] = [];
+const imageSpheres: Mesh[] = [];
+const imageInitialPositions: Vector3[] = [];
 
 // ビデオパネルの作成関数
 export function createPlaneWithVideo(
@@ -21,8 +39,8 @@ export function createPlaneWithVideo(
   height: number,
   fontColor: string,
   strokeColor: string,
-  position: THREE.Vector3,
-  rotation: THREE.Euler,
+  position: Vector3,
+  rotation: Euler,
   contentId: string,
   videoSrc: string,
   title: string
@@ -34,16 +52,16 @@ export function createPlaneWithVideo(
   video.crossOrigin = "anonymous";
   video.play();
 
-  const videoTexture = new THREE.VideoTexture(video);
-  const material = new THREE.ShaderMaterial({
+  const videoTexture = new VideoTexture(video);
+  const material = new ShaderMaterial({
     uniforms: { videoTexture: { value: videoTexture } },
     vertexShader: vertexShader_2d,
     fragmentShader: fragmentShader_2d,
-    side: THREE.DoubleSide,
+    side: DoubleSide,
   });
 
-  const geometry = new THREE.PlaneGeometry(width, height);
-  const plane = new THREE.Mesh(geometry, material);
+  const geometry = new PlaneGeometry(width, height);
+  const plane = new Mesh(geometry, material);
   plane.position.copy(position);
   plane.rotation.copy(rotation);
   plane.userData.contentId = contentId;
@@ -62,13 +80,13 @@ export function createPlaneWithVideo(
   context.textBaseline = "middle";
   context.fillText(title, 256, 256);
 
-  const titleTexture = new THREE.CanvasTexture(titleCanvas);
-  const titleMaterial = new THREE.MeshBasicMaterial({
+  const titleTexture = new CanvasTexture(titleCanvas);
+  const titleMaterial = new MeshBasicMaterial({
     map: titleTexture,
     transparent: true,
   });
-  const titleGeometry = new THREE.PlaneGeometry(width, height);
-  const titlePlane = new THREE.Mesh(titleGeometry, titleMaterial);
+  const titleGeometry = new PlaneGeometry(width, height);
+  const titlePlane = new Mesh(titleGeometry, titleMaterial);
   titlePlane.position.copy(position);
   titlePlane.rotation.copy(rotation);
   titlePlane.position.z +=
@@ -81,8 +99,8 @@ export function createPlaneWithVideo(
 // ビデオ球体の作成関数
 export function createVideoSphere(
   radius: number,
-  position: THREE.Vector3,
-  rotation: THREE.Euler,
+  position: Vector3,
+  rotation: Euler,
   videoSrc: string,
   title: string,
   font: Font
@@ -94,20 +112,20 @@ export function createVideoSphere(
   video.crossOrigin = "anonymous";
   video.pause();
 
-  const videoTexture = new THREE.VideoTexture(video);
-  videoTexture.minFilter = THREE.LinearFilter;
-  videoTexture.magFilter = THREE.LinearFilter;
-  videoTexture.format = THREE.RGBAFormat;
+  const videoTexture = new VideoTexture(video);
+  videoTexture.minFilter = LinearFilter;
+  videoTexture.magFilter = LinearFilter;
+  videoTexture.format = RGBAFormat;
 
-  const sphereGeometry = new THREE.SphereGeometry(radius, 32, 32);
-  const sphereMaterial = new THREE.ShaderMaterial({
+  const sphereGeometry = new SphereGeometry(radius, 32, 32);
+  const sphereMaterial = new ShaderMaterial({
     uniforms: { videoTexture: { value: videoTexture } },
     vertexShader: vertexShader_3d,
     fragmentShader: fragmentShader_3d,
-    side: THREE.BackSide,
+    side: BackSide,
   });
 
-  const videoSphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+  const videoSphere = new Mesh(sphereGeometry, sphereMaterial);
   videoSphere.position.copy(position);
   videoSphere.rotation.copy(rotation);
   videoSphere.userData = { video, isPlaying: false, radius };
@@ -132,28 +150,28 @@ export function createVideoSphere(
 // 画像球体の作成関数
 export function createImageSphere(
   radius: number,
-  position: THREE.Vector3,
-  rotation: THREE.Euler,
+  position: Vector3,
+  rotation: Euler,
   imageSrc: string,
   title: string,
   font: Font
 ) {
-  const textureLoader = new THREE.TextureLoader();
+  const textureLoader = new TextureLoader();
   textureLoader.setCrossOrigin("anonymous");
   textureLoader.load(imageSrc, (imageTexture) => {
-    imageTexture.minFilter = THREE.LinearFilter;
-    imageTexture.magFilter = THREE.LinearFilter;
-    imageTexture.format = THREE.RGBAFormat;
+    imageTexture.minFilter = LinearFilter;
+    imageTexture.magFilter = LinearFilter;
+    imageTexture.format = RGBAFormat;
 
-    const sphereMaterial = new THREE.ShaderMaterial({
+    const sphereMaterial = new ShaderMaterial({
       uniforms: { videoTexture: { value: imageTexture } },
       vertexShader: vertexShader_3d,
       fragmentShader: fragmentShader_3d,
-      side: THREE.BackSide,
+      side: BackSide,
     });
 
-    const sphereGeometry = new THREE.SphereGeometry(radius, 32, 32);
-    const imageSphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+    const sphereGeometry = new SphereGeometry(radius, 32, 32);
+    const imageSphere = new Mesh(sphereGeometry, sphereMaterial);
     imageSphere.position.copy(position);
     imageSphere.rotation.copy(rotation);
     imageSphere.userData = { isImage: true, radius };
@@ -180,7 +198,7 @@ export function createTextMeshes(
   font: Font,
   size: number,
   color: number
-): THREE.Mesh[] {
+): Mesh[] {
   const letters = text.split("");
   const textMeshes = letters.map((letter) => {
     const geometry = new TextGeometry(letter, {
@@ -188,11 +206,11 @@ export function createTextMeshes(
       size: size,
       depth: 0.5,
     });
-    const material = new THREE.MeshBasicMaterial({
+    const material = new MeshBasicMaterial({
       color: color,
-      side: THREE.DoubleSide,
+      side: DoubleSide,
     });
-    const mesh = new THREE.Mesh(geometry, material);
+    const mesh = new Mesh(geometry, material);
     return mesh;
   });
 
@@ -206,24 +224,27 @@ export function createTextMeshes(
 
 // メタルボックスの作成関数
 export function createMetalBox(
-  spherePosition: THREE.Vector3,
-  sphereRotation: THREE.Euler,
+  spherePosition: Vector3,
+  sphereRotation: Euler,
   radius: number,
   width: number,
   height: number,
   depth: number
 ) {
-  const boxGeometry = new THREE.BoxGeometry(width, height, depth);
-  const textureLoader = new THREE.TextureLoader();
-  const metalMaterial = new THREE.MeshStandardMaterial({
-    side: THREE.DoubleSide,
+  const boxGeometry = new BoxGeometry(width, height, depth);
+  const textureLoader = new TextureLoader();
+  const metalMaterial = new MeshStandardMaterial({
+    side: DoubleSide,
     roughness: 0.2,
     metalness: 0.7,
-    metalnessMap: textureLoader.load("../textures/stone.jpg"),
+    // metalnessMap: textureLoader.load("../textures/stone.jpg"),
+    metalnessMap: textureLoader.load(
+      new URL("../textures/stone.jpg", import.meta.url).toString()
+    ),
     emissive: 0x333333,
     emissiveIntensity: 0.4,
   });
-  const metalBox = new THREE.Mesh(boxGeometry, metalMaterial);
+  const metalBox = new Mesh(boxGeometry, metalMaterial);
   metalBox.position.copy(spherePosition);
   metalBox.position.set(
     spherePosition.x,
@@ -238,14 +259,24 @@ export function createMetalBox(
 // ドローンの読み込み
 export function loadDrones() {
   const fbxLoader = new FBXLoader();
-  fbxLoader.setResourcePath("./models/Drone_Costum/Teturizer/");
-  fbxLoader.load("./models/Drone_Costum/Material/drone_costum.fbx", (obj) => {
-    obj.scale.set(0.015, 0.015, 0.015);
-    drone1 = obj;
-    drone2 = obj.clone();
-    scene.add(drone1);
-    scene.add(drone2);
-  });
+  // fbxLoader.setResourcePath("../models/Drone_Costum/Teturizer/");
+  // fbxLoader.load("../models/Drone_Costum/Material/drone_costum.fbx", (obj) => {
+  fbxLoader.setResourcePath(
+    new URL("/models/Drone_Costum/Teturizer/", import.meta.url).toString()
+  );
+  fbxLoader.load(
+    new URL(
+      "/models/Drone_Costum/Material/drone_costum.fbx",
+      import.meta.url
+    ).toString(),
+    (obj) => {
+      obj.scale.set(0.015, 0.015, 0.015);
+      drone1 = obj;
+      drone2 = obj.clone();
+      scene.add(drone1);
+      scene.add(drone2);
+    }
+  );
 }
 
 export {

@@ -1,3 +1,13 @@
+/*
+学び
+
+<パスの絶対指定と相対指定>
+相対パス: ビルド時に問題になることが多いので、できるだけ避ける。
+絶対パス: プロジェクトルートからのパスを指定する方法を使用する。
+
+相対パスを用いる場合→import.meta.urlで現在のモジュールのURLを取得し、new URLを使用することでファイルパスの解決に役立つ
+ */
+
 import "./style.css";
 import * as THREE from "three";
 import { FontLoader, Font } from "three/addons/loaders/FontLoader.js";
@@ -75,12 +85,26 @@ function init() {
 }
 
 // フォントの読み込み
+// function loadFont() {
+//   const fontLoader = new FontLoader();
+//   fontLoader.load("../fonts/helvetiker_regular.typeface.json", (loadedFont) => {
+//     font = loadedFont;
+//     setupInitialObjects();
+//   });
+// }
+
 function loadFont() {
   const fontLoader = new FontLoader();
-  fontLoader.load("../fonts/helvetiker_regular.typeface.json", (loadedFont) => {
-    font = loadedFont;
-    setupInitialObjects();
-  });
+  fontLoader.load(
+    new URL(
+      "../fonts/helvetiker_regular.typeface.json",
+      import.meta.url
+    ).toString(),
+    (loadedFont) => {
+      font = loadedFont;
+      setupInitialObjects();
+    }
+  );
 }
 
 // 環境オブジェクトの初期設定

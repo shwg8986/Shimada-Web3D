@@ -3,7 +3,7 @@ import { getIsCameraMoving, setIsCameraMoving } from "./main.ts";
 import { videoSpheres, imageSpheres, tabObjects } from "./objCreateFunc.ts";
 import { moveCameraTo } from "./cameraMoveControls.ts";
 
-let isOverlayVisible = false;
+// let isOverlayVisible = false;
 
 // 指定されたコンテンツを表示する関数
 export function showContent(id: string) {
@@ -35,7 +35,7 @@ export function showContent(id: string) {
   } else {
     console.error("Overlay not found.");
   }
-  isOverlayVisible = true;
+  // isOverlayVisible = true;
 }
 
 // オーバーレイを閉じる関数
@@ -46,7 +46,7 @@ export function closeOverlay() {
     const contents = document.querySelectorAll(".content-item");
     contents.forEach((content) => content.classList.remove("active"));
   }
-  isOverlayVisible = false;
+  // isOverlayVisible = false;
 }
 
 // タブクリック時の処理を追加

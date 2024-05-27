@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { camera, renderer } from "./setup";
+import { camera, renderer } from "./setup.ts";
 import { handleInteraction } from "./utils.ts";
 import {
   onMouseWheel,
@@ -8,8 +8,8 @@ import {
   onKeyDown,
   onKeyUp,
   setupJoystick,
-} from "./cameraMoveControls";
-import { videoSpheres, imageSpheres, tabObjects } from "./objCreateFunc";
+} from "./cameraMoveControls.ts";
+import { videoSpheres, imageSpheres, tabObjects } from "./objCreateFunc.ts";
 
 const sizes = { width: window.innerWidth, height: window.innerHeight };
 const initialCameraPosition = new THREE.Vector3(0, 10, 0);

@@ -1,0 +1,2 @@
+export declare const vertexShader_3d = "\n  varying vec2 vUv;\n  void main() {\n    vUv = uv;\n    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);\n  }\n";
+export declare const fragmentShader_3d = "\n    uniform sampler2D videoTexture;\n    varying vec2 vUv;\n    void main() {\n      vec2 uv = vUv;\n      uv.x = 1.0 - uv.x; // \u6C34\u5E73\u65B9\u5411\u306B\u53CD\u8EE2\n      gl_FragColor = texture2D(videoTexture, uv);\n    }\n";

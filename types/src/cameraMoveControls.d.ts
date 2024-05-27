@@ -1,0 +1,15 @@
+import { Euler, Vector3 } from "three";
+declare let moveForward: boolean;
+declare let moveBackward: boolean;
+declare let moveLeft: boolean;
+declare let moveRight: boolean;
+export declare function resetCameraPitch(): void;
+export declare function onMouseWheel(event: WheelEvent): void;
+export declare function onTouchPinch(this: any, event: TouchEvent): void;
+export declare function onTouchPicthEnd(this: any): void;
+export declare function setupJoystick(): void;
+export declare function onKeyDown(event: KeyboardEvent): void;
+export declare function onKeyUp(event: KeyboardEvent): void;
+export declare function moveCameraTo(targetPosition: Vector3, targetRotation: Euler, onComplete: () => void): void;
+export declare function moveCameraInsideSphere(spherePosition: Vector3, sphereRotation: Euler, onComplete: () => void): void;
+export { moveForward, moveBackward, moveLeft, moveRight };

@@ -1,0 +1,16 @@
+import { Group, Mesh, Vector3, Euler, ShaderMaterial, PlaneGeometry, SphereGeometry, BoxGeometry, MeshStandardMaterial } from "three";
+import { Font } from "three/addons/loaders/FontLoader.js";
+declare let drone1: Group;
+declare let drone2: Group;
+declare const tabObjects: Mesh[];
+declare const videoSpheres: Mesh[];
+declare const videoInitialPositions: Vector3[];
+declare const imageSpheres: Mesh[];
+declare const imageInitialPositions: Vector3[];
+export declare function createPlaneWithVideo(width: number, height: number, fontColor: string, strokeColor: string, position: Vector3, rotation: Euler, contentId: string, videoSrc: string, title: string): Mesh<PlaneGeometry, ShaderMaterial, import("three").Object3DEventMap>;
+export declare function createVideoSphere(radius: number, position: Vector3, rotation: Euler, videoSrc: string, title: string, font: Font): Mesh<SphereGeometry, ShaderMaterial, import("three").Object3DEventMap>;
+export declare function createImageSphere(radius: number, position: Vector3, rotation: Euler, imageSrc: string, title: string, font: Font): void;
+export declare function createTextMeshes(text: string, font: Font, size: number, color: number): Mesh[];
+export declare function createMetalBox(spherePosition: Vector3, sphereRotation: Euler, radius: number, width: number, height: number, depth: number): Mesh<BoxGeometry, MeshStandardMaterial, import("three").Object3DEventMap>;
+export declare function loadDrones(): void;
+export { tabObjects, videoSpheres, imageSpheres, videoInitialPositions, imageInitialPositions, drone1, drone2, };

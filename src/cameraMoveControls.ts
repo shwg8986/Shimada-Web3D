@@ -1,4 +1,4 @@
-import * as THREE from "three";
+import { Euler, Vector3, MathUtils } from "three";
 import { camera } from "./setup";
 import nipplejs from "nipplejs";
 
@@ -9,7 +9,7 @@ let moveRight = false;
 
 // 移動時にカメラのピッチ角度をリセットするための関数
 export function resetCameraPitch() {
-  const euler = new THREE.Euler(0, camera.rotation.y, 0, "YXZ");
+  const euler = new Euler(0, camera.rotation.y, 0, "YXZ");
   camera.rotation.copy(euler);
 }
 
@@ -59,7 +59,7 @@ export function setupJoystick() {
       resetCameraPitch();
     });
 
-    joystick.on("move", (evt, data) => {
+    joystick.on("move", (_, data) => {
       moveForward = data.direction.y === "up";
       moveBackward = data.direction.y === "down";
       moveLeft = data.direction.x === "left";
@@ -119,8 +119,8 @@ export function onKeyUp(event: KeyboardEvent) {
 
 // カメラを指定位置に移動する関数
 export function moveCameraTo(
-  targetPosition: THREE.Vector3,
-  targetRotation: THREE.Euler,
+  targetPosition: Vector3,
+  targetRotation: Euler,
   onComplete: () => void
 ) {
   const duration = 300;
@@ -128,7 +128,7 @@ export function moveCameraTo(
   const startRotation = camera.rotation.clone();
   const startTime = performance.now();
 
-  const offset = new THREE.Vector3(0, 0, 20).applyEuler(targetRotation);
+  const offset = new Vector3(0, 0, 20).applyEuler(targetRotation);
   const adjustedPosition = targetPosition.clone().add(offset);
 
   function animateCamera(time: number) {
@@ -136,9 +136,9 @@ export function moveCameraTo(
     const t = Math.min(elapsedTime / duration, 1);
     camera.position.lerpVectors(startPosition, adjustedPosition, t);
     camera.rotation.set(
-      THREE.MathUtils.lerp(startRotation.x, targetRotation.x, t),
-      THREE.MathUtils.lerp(startRotation.y, targetRotation.y, t),
-      THREE.MathUtils.lerp(startRotation.z, targetRotation.z, t)
+      MathUtils.lerp(startRotation.x, targetRotation.x, t),
+      MathUtils.lerp(startRotation.y, targetRotation.y, t),
+      MathUtils.lerp(startRotation.z, targetRotation.z, t)
     );
     if (t < 1) {
       requestAnimationFrame(animateCamera);
@@ -152,8 +152,8 @@ export function moveCameraTo(
 
 // カメラを球体の内部に移動する関数
 export function moveCameraInsideSphere(
-  spherePosition: THREE.Vector3,
-  sphereRotation: THREE.Euler,
+  spherePosition: Vector3,
+  sphereRotation: Euler,
   onComplete: () => void
 ) {
   const duration = 300;
@@ -168,9 +168,9 @@ export function moveCameraInsideSphere(
     const t = Math.min(elapsedTime / duration, 1);
     camera.position.lerpVectors(startPosition, adjustedPosition, t);
     camera.rotation.set(
-      THREE.MathUtils.lerp(startRotation.x, sphereRotation.x, t),
-      THREE.MathUtils.lerp(startRotation.y, sphereRotation.y, t),
-      THREE.MathUtils.lerp(startRotation.z, sphereRotation.z, t)
+      MathUtils.lerp(startRotation.x, sphereRotation.x, t),
+      MathUtils.lerp(startRotation.y, sphereRotation.y, t),
+      MathUtils.lerp(startRotation.z, sphereRotation.z, t)
     );
     if (t < 1) {
       requestAnimationFrame(animateCamera);

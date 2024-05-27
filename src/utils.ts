@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { camera } from "./setup";
+import { camera } from "./setup.ts";
 // import { isCameraMoving, isOverlay } from "./main";
 import { tabObjects, videoSpheres, imageSpheres } from "./objCreateFunc.ts";
 import { moveCameraInsideSphere, moveCameraTo } from "./cameraMoveControls.ts";

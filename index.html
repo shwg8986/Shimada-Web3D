@@ -238,5 +238,28 @@
     </div>
     
     <script type="module" src="/src/main.ts"></script>
+    <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-analytics.js";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    const firebaseConfig = {
+        apiKey: "AIzaSyC9N9indfhDVY67-U8Xr8l9W6QyVR7am1s", //公開しても問題ない情報
+        authDomain: "shimada-web3d.firebaseapp.com",
+        projectId: "shimada-web3d",
+        storageBucket: "shimada-web3d.appspot.com",
+        messagingSenderId: "766434889080",
+        appId: "1:766434889080:web:3f5ef3a3d8ce532b70cc8d", //公開しても問題ない情報
+        measurementId: "G-MV6S3572EN" //公開しても問題ない情報
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+    </script>
   </body>
 </html>

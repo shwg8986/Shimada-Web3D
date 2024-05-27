@@ -42,3 +42,29 @@ npm run preview
 Visit [http://localhost:4173/](http://localhost:4173/)
 
 [https://sean-bradley.github.io/Three.js-Boilerplate-TS-Vite/](https://sean-bradley.github.io/Three.js-Boilerplate-TS-Vite/)
+
+
+### firebaseで更新したいとき(自分用メモ)
+
+
+```
+firebase login
+```
+
+```
+firebase init
+```
+ここでWhat do you want to use as your public directory?と聞かれるので、distと入力し、Enter。
+Configure as a single-page app (rewrite all urls to /index.html)?と聞かれたらN, File public/index.html already exists. Overwrite?と聞かれるのでNと答えていく。
+
+```ビルド
+npm run build
+```
+
+```デプロイ前の確認
+npm run preview
+```
+
+```デプロイ
+firebase deploy
+```

@@ -17,6 +17,7 @@ import {
   setupCamera,
   setupRenderer,
   setupControls,
+  setUpCompass,
   setupWater,
   setupSkybox,
   setupLights,
@@ -44,6 +45,7 @@ import {
 
 import {
   updateDrones,
+  updateCompass,
   updateCameraControls,
   updateVideoSpheres,
   updateImageSpheres,
@@ -73,6 +75,7 @@ function init() {
     setupCamera(); // カメラの設定
     setupRenderer(); // レンダラーの設定
     setupControls(); // カメラ制御の設定
+    setUpCompass(); // コンパスの設定
     setupWater(); // 水面の設定
     setupSkybox(); // 空の設定
     initializeAccordions(); // アコーディオンの初期化
@@ -128,7 +131,6 @@ function setupInitialObjects() {
 
 function animate() {
   const clock = new THREE.Clock();
-
   function render() {
     const elapsedTime = clock.getElapsedTime();
     const amplitude = 1.5;
@@ -158,6 +160,9 @@ function animate() {
     if (controls) {
       updateCameraControls(controls);
     }
+
+    // コンパスの向きを更新
+    updateCompass();
 
     renderer.render(scene, camera);
     requestAnimationFrame(render);

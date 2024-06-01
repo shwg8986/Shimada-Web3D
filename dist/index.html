@@ -14,9 +14,9 @@
 
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap">
   <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
-    <script type="module" crossorigin src="./assets/index-hrNJIbrw.js"></script>
+    <script type="module" crossorigin src="./assets/index-GTbdaW4g.js"></script>
     <link rel="modulepreload" crossorigin href="./assets/vendor-BH_OlmQq.js">
-    <link rel="stylesheet" crossorigin href="./assets/index-BhWr6vV9.css">
+    <link rel="stylesheet" crossorigin href="./assets/index-B70ts720.css">
   </head>
   <body>
     <div id="app">
@@ -28,6 +28,18 @@
             <div class="tab" id="tab2" data-position-x="x2" data-position-y="y2" data-position-z="z2" data-rotation-x="rx2" data-rotation-y="ry2" data-rotation-z="rz2">Education</div>
             <div class="tab" id="tab3" data-position-x="x3" data-position-y="y3" data-position-z="z3" data-rotation-x="rx3" data-rotation-y="ry3" data-rotation-z="rz3">Publication</div>
             <div class="tab" id="tab4" data-position-x="x4" data-position-y="y4" data-position-z="z4" data-rotation-x="rx4" data-rotation-y="ry4" data-rotation-z="rz4">Link</div>
+        </div>
+        <div id="compass">
+            <svg id="compass-svg" viewBox="0 0 100 100">
+                <circle id="compass-bg" cx="50" cy="50" r="48"/>
+                <g id="compass-needle" transform="translate(50, 50)">
+                    <line x1="0" y1="0" x2="0" y2="-40" stroke="red" stroke-width="2"/>
+                </g>
+                <text x="50" y="15" text-anchor="middle" font-size="10" fill="white">N</text>
+                <text x="50" y="95" text-anchor="middle" font-size="10" fill="white">S</text>
+                <text x="95" y="50" text-anchor="middle" font-size="10" fill="white">E</text>
+                <text x="5" y="50" text-anchor="middle" font-size="10" fill="white">W</text>
+            </svg>
         </div>
         <div class="overlay" id="overlay">
         <div class="content-container">

@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { camera, renderer } from "./setup.ts";
+import { camera, renderer, setUpCompass } from "./setup.ts";
 import { handleInteraction, isMobile } from "./utils.ts";
 import {
   onMouseWheel,
@@ -144,6 +144,9 @@ export function setupEventListeners() {
       headerElement.textContent = "しまだのWeb3D - PC版";
     }
   });
+
+  // コンパスの初期化
+  window.addEventListener("load", setUpCompass);
 
   // マウスイベント
   canvas.addEventListener("mousedown", onMouseDown, { passive: true });

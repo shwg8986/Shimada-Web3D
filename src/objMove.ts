@@ -6,7 +6,7 @@ import {
   moveLeft,
   moveRight,
 } from "./cameraMoveControls.ts";
-import { camera } from "./setup.ts";
+import { camera, compassNeedle } from "./setup.ts";
 import { drone1, drone2 } from "./objCreateFunc.ts";
 
 let isInsideSphere = false;
@@ -26,6 +26,18 @@ export function updateDrones(elapsedTime: number) {
     drone2.position.z =
       100 * Math.cos(elapsedTime * 0.3) + 10 * Math.sin(elapsedTime * 1.5);
   }
+}
+
+// コンパスの向きを更新する関数
+export function updateCompass() {
+  // カメラの向きを取得
+  const direction = new Vector3();
+  camera.getWorldDirection(direction);
+  // 方位角を計算
+  const angle = Math.atan2(direction.x, direction.z);
+  const degree = angle * (180 / Math.PI) + 180;
+  // 方位磁針の針を回転
+  compassNeedle.style.transform = `rotate(${-degree}deg)`;
 }
 
 // カメラの移動を更新する関数

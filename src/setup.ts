@@ -10,6 +10,7 @@ let controls: PointerLockControls | undefined;
 let water: Water;
 let sky: Sky;
 let sun: THREE.Vector3;
+let compassNeedle: SVGLineElement;
 
 const sizes = { width: window.innerWidth, height: window.innerHeight };
 const initialCameraPosition = new THREE.Vector3(0, 10, 0);
@@ -55,6 +56,11 @@ export function setupControls() {
   } else {
     console.error("Canvas element not found");
   }
+}
+
+// コンパスの設定
+export function setUpCompass() {
+  compassNeedle = document.getElementById("compass-svg").querySelector("line");
 }
 
 // 水面の設定
@@ -129,4 +135,4 @@ export function setupLights() {
   scene.add(directionalLight);
 }
 
-export { scene, camera, renderer, controls, water, sky, sun };
+export { scene, camera, renderer, controls, compassNeedle, water, sky, sun };

@@ -21,6 +21,10 @@ body {
   cursor: pointer; /* デフォルトのカーソルをポインタに設定 */
 }
 
+.mobile-header {
+  font-size: calc(5vw); /* 文字のサイズを画面の横幅の50%に設定 */
+}
+
 #joystickContainer {
   position: absolute;
   bottom: 20px;

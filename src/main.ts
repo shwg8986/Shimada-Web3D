@@ -37,8 +37,9 @@ import {
 
 import {
   createPlanesWithVideos,
-  createVideoSpheres,
-  createImageSpheres,
+  createVideoSpheres_PC,
+  createImageSpheres_PC_smartPhone,
+  createImageSpheres_smartPhone,
 } from "./objCreate.ts";
 
 import {
@@ -52,7 +53,7 @@ import { handleTabClick, initOverlay } from "./overlay.ts";
 
 import { setupEventListeners, initializeAccordions } from "./eventListeners.ts";
 
-import { checkCameraInsideSphere } from "./utils.ts";
+import { checkCameraInsideSphere, isMobile } from "./utils.ts";
 
 // グローバル変数の定義
 let font: Font;
@@ -110,8 +111,15 @@ function loadFont() {
 // 環境オブジェクトの初期設定
 function setupInitialObjects() {
   createPlanesWithVideos(); // ビデオパネルの作成
-  createVideoSpheres(); // ビデオ球体の作成
-  createImageSpheres(); // 画像球体の作成
+  createImageSpheres_PC_smartPhone(); // 画像球体の作成
+
+  if (isMobile()) {
+    createImageSpheres_smartPhone(); // 画像球体の作成
+    console.log("Device is smartPhone");
+  } else {
+    createVideoSpheres_PC(); // ビデオ球体の作成
+    console.log("Device is PC");
+  }
   loadDrones(); // ドローンの読み込み
   setupLights(); // ライトの設定
 }

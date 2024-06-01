@@ -23,6 +23,7 @@ import { vertexShader_3d, fragmentShader_3d } from "../shaders/shader_3d.ts";
 import { FBXLoader } from "three/addons/loaders/FBXLoader.js";
 import { Font } from "three/addons/loaders/FontLoader.js";
 import { scene } from "./setup.ts";
+import { isMobile } from "./utils.ts";
 
 let drone1: Group;
 let drone2: Group;
@@ -96,6 +97,22 @@ export function createPlaneWithVideo(
     rotation.y > Math.PI / 2 && rotation.y < (3 * Math.PI) / 2 ? -0.1 : 0.1;
   scene.add(titlePlane);
 
+  // スマホの場合、動画の解像度を下げる
+  video.addEventListener("loadeddata", () => {
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d")!;
+    if (isMobile()) {
+      canvas.width = video.videoWidth / 4; // 解像度を半分に下げる（スマホ向け）
+      canvas.height = video.videoHeight / 4;
+    } else {
+      canvas.width = video.videoWidth; // PCでは元の解像度
+      canvas.height = video.videoHeight;
+    }
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    videoTexture.needsUpdate = true;
+    console.log("loadeddata");
+  });
+
   return plane;
 }
 
@@ -114,7 +131,7 @@ export function createVideoSphere(
   video.muted = true;
   video.crossOrigin = "anonymous";
   video.setAttribute("playsinline", "");
-  // video.setAttribute("preload", "true");
+  video.setAttribute("preload", "true");
   video.setAttribute("autoplay", "true");
   video.pause();
   // video.load();
@@ -126,11 +143,6 @@ export function createVideoSphere(
 
   // 動画の最初のフレームがロードされたら再生を開始する
   video.addEventListener("loadeddata", () => {
-    const canvas = document.createElement("canvas");
-    const context = canvas.getContext("2d");
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    context.drawImage(video, 0, 0, canvas.width, canvas.height);
     videoTexture.needsUpdate = true;
     console.log("loadeddata");
   });

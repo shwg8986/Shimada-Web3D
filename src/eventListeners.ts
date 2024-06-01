@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { camera, renderer } from "./setup.ts";
-import { handleInteraction } from "./utils.ts";
+import { handleInteraction, isMobile } from "./utils.ts";
 import {
   onMouseWheel,
   onTouchPinch,
@@ -133,6 +133,16 @@ export function setupEventListeners() {
   ) as HTMLCanvasElement;
 
   // console.log("Event listeners set up");
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const headerElement = document.querySelector(".header");
+    if (isMobile()) {
+      headerElement.textContent = "しまだのWeb3D - スマホ版";
+      headerElement.classList.add("mobile-header");
+    } else {
+      headerElement.textContent = "しまだのWeb3D - PC版";
+    }
+  });
 
   // マウスイベント
   canvas.addEventListener("mousedown", onMouseDown, { passive: true });

@@ -67,3 +67,11 @@ export function handleInteraction(clientX: number, clientY: number) {
     }
   }
 }
+
+// スマホとPCの判定
+export function isMobile() {
+  const userAgent = navigator.userAgent || navigator.vendor;
+  return /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(
+    userAgent
+  );
+}

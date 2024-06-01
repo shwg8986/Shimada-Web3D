@@ -92,8 +92,8 @@ export function createPlanesWithVideos() {
   );
 }
 
-// ビデオ球体の作成
-export function createVideoSpheres() {
+// ビデオ球体の作成 - PC版
+export function createVideoSpheres_PC() {
   createVideoSphere(
     5,
     new Vector3(0, 8, -pentagon_radius),
@@ -131,8 +131,47 @@ export function createVideoSpheres() {
   );
 }
 
-// 画像球体の作成
-export function createImageSpheres() {
+// 画像球体の作成 - スマホ版
+export function createImageSpheres_smartPhone() {
+  createImageSphere(
+    5,
+    new Vector3(0, 8, -pentagon_radius),
+    new Euler(0, 0, 0),
+    new URL("../360Images/paris.png", import.meta.url).toString(),
+    "Paris Photo",
+    font
+  );
+
+  createImageSphere(
+    5,
+    new Vector3(
+      pentagon_radius * Math.sin(72 * (Math.PI / 180)),
+      8,
+      -pentagon_radius * Math.sin(18 * (Math.PI / 180))
+    ),
+    new Euler(0, MathUtils.degToRad(288), 0),
+    new URL("../360Images/bangkok.JPG", import.meta.url).toString(),
+    "Bangkok Photo",
+    font
+  );
+
+  createImageSphere(
+    5,
+    new Vector3(
+      -pentagon_radius * Math.sin(72 * (Math.PI / 180)),
+      8,
+      -pentagon_radius * Math.sin(18 * (Math.PI / 180))
+    ),
+    new Euler(0, MathUtils.degToRad(72), 0),
+    // "../360Images/singapore.JPG",
+    new URL("../360Images/warsaw.JPG", import.meta.url).toString(),
+    "Warsaw Photo",
+    font
+  );
+}
+
+// 画像球体の作成 - PC, スマホ共通
+export function createImageSpheres_PC_smartPhone() {
   createImageSphere(
     5,
     new Vector3(

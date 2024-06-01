@@ -10,7 +10,8 @@ body {
 }
 
 .header {
-  font-family: "Noto Sans JP", "sans-serif";
+  /* font-family: "Noto Sans JP", "sans-serif"; */
+  font-family: "Patrick Hand", cursive;
   position: absolute;
   font-size: 1.5em;
   font-weight: bold;
@@ -88,6 +89,11 @@ body {
 
 .content-item table {
   width: 100%;
+}
+
+#content0 p {
+  font-family: "Patrick Hand", cursive;
+  /* font-size: 20px; */
 }
 
 #content1 h3,
@@ -188,14 +194,32 @@ p {
 
 .close-button {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 3%;
+  right: 5%;
+  margin: 0;
+  padding: 0;
   background: none;
+  color: black; /* 初期色 */
   border: none;
   font-size: 5em;
   font-weight: 100;
   cursor: pointer;
   z-index: 100; /* 他の要素より前面に表示 */
+  transition: transform 0.2s ease-in-out;
+  /* transition: transform 0.2s ease-in-out, color 0.2s ease-in-out; アニメーションの追加 */
+}
+
+.close-button:hover {
+  transform: scale(1.1); /* ホバー時に少し大きくする */
+  color: rgba(93, 93, 241, 0.9); /* ホバー時に色を変える */
+}
+
+@media (max-width: 768px) {
+  .close-button {
+    top: 1%;
+    right: 3%;
+    font-size: 4em;
+  }
 }
 
 /* .nav {
@@ -260,7 +284,9 @@ p {
   display: flex;
   align-items: center; /* アイコンとテキストを中央揃え */
   transition: color 0.3s; /* ホバー時のトランジション */
-  font-family: cursive;
+  /* font-family: "Noto Sans JP"; */
+  font-family: "Patrick Hand", cursive;
+  /* font-family: "Dancing Script", cursive; */
 }
 
 .icon-container a i {

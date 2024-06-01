@@ -50,6 +50,9 @@ export function createPlaneWithVideo(
   video.loop = true;
   video.muted = true;
   video.crossOrigin = "anonymous";
+  // video.setAttribute("playsinline", "true");
+  video.setAttribute("playsinline", "");
+  video.setAttribute("preload", "auto");
   video.play();
 
   const videoTexture = new VideoTexture(video);
@@ -110,12 +113,22 @@ export function createVideoSphere(
   video.loop = true;
   video.muted = true;
   video.crossOrigin = "anonymous";
+  video.setAttribute("playsinline", "");
+  // video.setAttribute("preload", "true");
+  // video.setAttribute("autoplay", "true");
   video.pause();
+  // video.load();
 
   const videoTexture = new VideoTexture(video);
   videoTexture.minFilter = LinearFilter;
   videoTexture.magFilter = LinearFilter;
   videoTexture.format = RGBAFormat;
+
+  // 動画の最初のフレームがロードされたら再生を開始する
+  video.addEventListener("loadeddata", () => {
+    videoTexture.needsUpdate = true; // テクスチャの更新
+    console.log("loadeddata");
+  });
 
   const sphereGeometry = new SphereGeometry(radius, 32, 32);
   const sphereMaterial = new ShaderMaterial({

@@ -115,7 +115,7 @@ export function createVideoSphere(
   video.crossOrigin = "anonymous";
   video.setAttribute("playsinline", "");
   // video.setAttribute("preload", "true");
-  // video.setAttribute("autoplay", "true");
+  video.setAttribute("autoplay", "true");
   video.pause();
   // video.load();
 
@@ -126,7 +126,12 @@ export function createVideoSphere(
 
   // 動画の最初のフレームがロードされたら再生を開始する
   video.addEventListener("loadeddata", () => {
-    videoTexture.needsUpdate = true; // テクスチャの更新
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    videoTexture.needsUpdate = true;
     console.log("loadeddata");
   });
 

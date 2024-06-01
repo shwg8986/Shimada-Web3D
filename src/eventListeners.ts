@@ -8,6 +8,7 @@ import {
   onKeyDown,
   onKeyUp,
   setupJoystick,
+  moveCameraTo,
 } from "./cameraMoveControls.ts";
 import { videoSpheres, imageSpheres, tabObjects } from "./objCreateFunc.ts";
 
@@ -173,16 +174,31 @@ export function setupEventListeners() {
     camera.updateProjectionMatrix();
   }
 
-  // ヘッダーをクリックしたときにカメラをリセット
+  // ヘッダーまたはバックボタンをクリックしたときにカメラをリセット
   const header = document.querySelector(".header");
   if (header) {
     header.addEventListener("click", () => {
-      camera.position.set(
-        initialCameraPosition.x,
-        initialCameraPosition.y,
-        initialCameraPosition.z
-      );
-      camera.rotation.set(0, 0, 0);
+      // camera.position.set(
+      //   initialCameraPosition.x,
+      //   initialCameraPosition.y,
+      //   initialCameraPosition.z
+      // );
+      // camera.rotation.set(0, 0, 0);
+      moveCameraTo(initialCameraPosition, new THREE.Euler(0, 0, 0), () => {});
+      changeCameraFov(75); // fovを75に変更
+    });
+  }
+
+  const backButton = document.getElementById("back-button");
+  if (backButton) {
+    backButton.addEventListener("click", () => {
+      // camera.position.set(
+      //   initialCameraPosition.x,
+      //   initialCameraPosition.y,
+      //   initialCameraPosition.z
+      // );
+      // camera.rotation.set(0, 0, 0);
+      moveCameraTo(initialCameraPosition, new THREE.Euler(0, 0, 0), () => {});
       changeCameraFov(75); // fovを75に変更
     });
   }

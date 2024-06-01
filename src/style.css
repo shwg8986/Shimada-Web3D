@@ -56,6 +56,46 @@ body {
   background-color: #ddd;
 }
 
+#back-button {
+  position: fixed;
+  bottom: 15px;
+  right: 15px;
+  padding: 10px 20px;
+  background: linear-gradient(
+    135deg,
+    #ff7e5f,
+    #feb47b
+  ); /* グラデーション背景 */
+  color: white;
+  border: none;
+  border-radius: 25px; /* 丸みを帯びた角 */
+  font-size: 16px;
+  display: none; /* 最初は非表示 */
+  cursor: pointer;
+  z-index: 20;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08); /* ボックスシャドウ */
+  transition: background 0.3s, transform 0.3s; /* スムーズなトランジション */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#back-button:hover {
+  background: linear-gradient(
+    135deg,
+    #feb47b,
+    #ff7e5f
+  ); /* ホバー時のグラデーション */
+  transform: translateY(-2px); /* ホバー時に少し上に移動 */
+}
+#back-button:active {
+  transform: translateY(1px); /* クリック時に少し下に移動 */
+}
+#back-button::before {
+  content: "＜"; /* 左向きの矢印 */
+  font-size: 16px;
+  margin-right: 8px; /* テキストとの間隔を調整 */
+}
+
 .accordion {
   border-radius: 4px;
   margin: 12px 0;

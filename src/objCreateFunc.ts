@@ -110,7 +110,7 @@ export function createPlaneWithVideo(
     }
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
     videoTexture.needsUpdate = true;
-    console.log("loadeddata");
+    // console.log("loadeddata");
   });
 
   return plane;
@@ -144,7 +144,7 @@ export function createVideoSphere(
   // 動画の最初のフレームがロードされたら再生を開始する
   video.addEventListener("loadeddata", () => {
     videoTexture.needsUpdate = true;
-    console.log("loadeddata");
+    // console.log("loadeddata");
   });
 
   const sphereGeometry = new SphereGeometry(radius, 32, 32);

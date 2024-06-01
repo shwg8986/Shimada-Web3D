@@ -37,6 +37,7 @@ export function updateCameraControls(controls: PointerLockControls) {
   if (moveRight) controls.moveRight(moveSpeed);
 }
 
+let previousIsInsideSphereStates_Video: boolean[] = [];
 // ビデオ球体の位置を更新する関数
 export function updateVideoSpheres(
   spheres: Mesh[],
@@ -48,21 +49,37 @@ export function updateVideoSpheres(
   spheres.forEach((sphere, index) => {
     const initialPosition = initialPositions[index];
     const yOffset = amplitude * Math.sin(frequency * elapsedTime);
+    const backButton = document.getElementById("back-button") as HTMLElement;
+    const tabs = document.querySelector(".tabs") as HTMLElement;
 
     // カメラが球体の中にいるかどうかをチェック
     const distanceToCamera = camera.position.distanceTo(sphere.position);
     isInsideSphere = distanceToCamera < sphere.userData.radius;
 
-    if (isInsideSphere) {
-      if (!sphere.userData.isPlaying) {
-        sphere.userData.video.play(); // 動画を再生
-        sphere.userData.isPlaying = true;
+    //  初回チェック用にpreviousIsInsideSphereStates_Videoを初期化
+    if (previousIsInsideSphereStates_Video.length < spheres.length) {
+      previousIsInsideSphereStates_Video.push(!isInsideSphere);
+    }
+
+    // 状態が変わったときだけ処理を実行
+    if (isInsideSphere !== previousIsInsideSphereStates_Video[index]) {
+      if (isInsideSphere) {
+        backButton.style.display = "block"; // ボタンを表示
+        tabs.style.display = "none"; // タブを非表示
+        if (!sphere.userData.isPlaying) {
+          sphere.userData.video.play(); // 動画を再生
+          sphere.userData.isPlaying = true;
+        }
+      } else {
+        backButton.style.display = "none"; // ボタンを非表示
+        tabs.style.display = "block"; // タブを表示
+        if (sphere.userData.isPlaying) {
+          sphere.userData.video.pause(); // 動画を停止
+          sphere.userData.isPlaying = false;
+        }
       }
-    } else {
-      if (sphere.userData.isPlaying) {
-        sphere.userData.video.pause(); // 動画を停止
-        sphere.userData.isPlaying = false;
-      }
+      // 状態を更新
+      previousIsInsideSphereStates_Video[index] = isInsideSphere;
     }
 
     if (!isInsideSphere) {
@@ -101,6 +118,7 @@ export function updateVideoSpheres(
   });
 }
 
+let previousIsInsideSphereStates_Image: boolean[] = [];
 // 画像球体の位置を更新する関数
 export function updateImageSpheres(
   spheres: Mesh[],
@@ -112,10 +130,30 @@ export function updateImageSpheres(
   spheres.forEach((sphere, index) => {
     const initialPosition = initialPositions[index];
     const yOffset = amplitude * Math.sin(frequency * elapsedTime);
+    const backButton = document.getElementById("back-button") as HTMLElement;
+    const tabs = document.querySelector(".tabs") as HTMLElement;
 
     // カメラが球体の中にいるかどうかをチェック
     const distanceToCamera = camera.position.distanceTo(sphere.position);
     isInsideSphere = distanceToCamera < sphere.userData.radius;
+
+    // 初回チェック用にpreviousIsInsideSphereStatesを初期化
+    if (previousIsInsideSphereStates_Image.length < spheres.length) {
+      previousIsInsideSphereStates_Image.push(!isInsideSphere);
+    }
+
+    // 状態が変わったときだけ処理を実行
+    if (isInsideSphere !== previousIsInsideSphereStates_Image[index]) {
+      if (isInsideSphere) {
+        backButton.style.display = "block"; // ボタンを表示
+        tabs.style.display = "none"; // タブを非表示
+      } else {
+        backButton.style.display = "none"; // ボタンを非表示
+        tabs.style.display = "block"; // タブを表示
+      }
+      // 状態を更新
+      previousIsInsideSphereStates_Image[index] = isInsideSphere;
+    }
 
     if (!isInsideSphere) {
       sphere.position.y = initialPosition.y + yOffset;

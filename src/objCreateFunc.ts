@@ -292,11 +292,11 @@ export function loadDrones() {
   // fbxLoader.setResourcePath("../models/Drone_Costum/Teturizer/");
   // fbxLoader.load("../models/Drone_Costum/Material/drone_costum.fbx", (obj) => {
   fbxLoader.setResourcePath(
-    new URL("/models/Drone_Costum/Teturizer/", import.meta.url).toString()
+    new URL("/models/Drone_Custom/Teturizer/", import.meta.url).toString()
   );
   fbxLoader.load(
     new URL(
-      "/models/Drone_Costum/Material/drone_costum.fbx",
+      "/models/Drone_Custom/Material/drone_costum.fbx",
       import.meta.url
     ).toString(),
     (obj) => {

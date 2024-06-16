@@ -291,8 +291,22 @@ export function loadDrones() {
   const fbxLoader = new FBXLoader();
   // fbxLoader.setResourcePath("../models/Drone_Costum/Teturizer/");
   // fbxLoader.load("../models/Drone_Costum/Material/drone_costum.fbx", (obj) => {
+
+  // fbxLoader.setResourcePath(
+  //   new URL("/models/Drone_Costum/Teturizer/", import.meta.url).toString()
+  // );
+
   fbxLoader.setResourcePath(
-    new URL("/models/Drone_Costum/Teturizer/", import.meta.url).toString()
+    new URL(
+      "/models/Drone_Costum/Teturizer/Blury.jpg",
+      import.meta.url
+    ).toString()
+  );
+  fbxLoader.setResourcePath(
+    new URL(
+      "/models/Drone_Costum/Teturizer/Aperture-icon.png",
+      import.meta.url
+    ).toString()
   );
   fbxLoader.load(
     new URL(

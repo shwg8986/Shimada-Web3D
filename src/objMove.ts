@@ -193,7 +193,6 @@ export function updateImageSpheres(
     amplitude,
     frequency,
     previousIsInsideSphereStates_Image,
-    // handleImageSphereInsideStateChange
     (_sphere, isInside) => handleImageSphereInsideStateChange(isInside)
   );
 }

@@ -9,8 +9,6 @@ import {
 import { camera, compassNeedle } from "./setup.ts";
 import { drone1, drone2 } from "./objCreateFunc.ts";
 
-let isInsideSphere = false;
-
 // ドローンの位置を更新する関数
 export function updateDrones(elapsedTime: number) {
   if (drone1 && drone2) {
@@ -50,50 +48,43 @@ export function updateCameraControls(controls: PointerLockControls) {
 }
 
 let previousIsInsideSphereStates_Video: boolean[] = [];
-// ビデオ球体の位置を更新する関数
-export function updateVideoSpheres(
+let previousIsInsideSphereStates_Image: boolean[] = [];
+
+function updateSpheres(
   spheres: Mesh[],
   initialPositions: Vector3[],
   elapsedTime: number,
   amplitude: number,
-  frequency: number
+  frequency: number,
+  previousStates: boolean[],
+  handleInsideStateChange: (sphere: Mesh, isInside: boolean) => void
 ) {
+  const backButton = document.getElementById("back-button") as HTMLElement;
+  const tabs = document.querySelector(".tabs") as HTMLElement;
+
+  if (!backButton || !tabs) {
+    console.error("Required elements are not found in the DOM.");
+    return;
+  }
+
+  const yOffset = amplitude * Math.sin(frequency * elapsedTime);
+
   spheres.forEach((sphere, index) => {
     const initialPosition = initialPositions[index];
-    const yOffset = amplitude * Math.sin(frequency * elapsedTime);
-    const backButton = document.getElementById("back-button") as HTMLElement;
-    const tabs = document.querySelector(".tabs") as HTMLElement;
 
     // カメラが球体の中にいるかどうかをチェック
     const distanceToCamera = camera.position.distanceTo(sphere.position);
-    isInsideSphere = distanceToCamera < sphere.userData.radius;
+    const isInsideSphere = distanceToCamera < sphere.userData.radius;
 
-    //  初回チェック用にpreviousIsInsideSphereStates_Videoを初期化
-    if (previousIsInsideSphereStates_Video.length < spheres.length) {
-      previousIsInsideSphereStates_Video.push(!isInsideSphere);
+    // 初回チェック用にpreviousStatesを初期化
+    if (previousStates.length < spheres.length) {
+      previousStates.push(!isInsideSphere);
     }
 
     // 状態が変わったときだけ処理を実行
-    if (isInsideSphere !== previousIsInsideSphereStates_Video[index]) {
-      if (isInsideSphere) {
-        backButton.style.display = "block"; // ボタンを表示
-        backButton.style.visibility = "visible"; /* ボタンを表示 */
-        tabs.style.display = "none"; // タブを非表示
-        if (!sphere.userData.isPlaying) {
-          sphere.userData.video.play(); // 動画を再生
-          sphere.userData.isPlaying = true;
-        }
-      } else {
-        backButton.style.display = "none"; // ボタンを非表示
-        backButton.style.visibility = "hidden"; /* ボタンを非表示 */
-        tabs.style.display = "block"; // タブを表示
-        if (sphere.userData.isPlaying) {
-          sphere.userData.video.pause(); // 動画を停止
-          sphere.userData.isPlaying = false;
-        }
-      }
-      // 状態を更新
-      previousIsInsideSphereStates_Video[index] = isInsideSphere;
+    if (isInsideSphere !== previousStates[index]) {
+      handleInsideStateChange(sphere, isInsideSphere);
+      previousStates[index] = isInsideSphere;
     }
 
     if (!isInsideSphere) {
@@ -132,8 +123,62 @@ export function updateVideoSpheres(
   });
 }
 
-let previousIsInsideSphereStates_Image: boolean[] = [];
-// 画像球体の位置を更新する関数
+function handleVideoSphereInsideStateChange(sphere: Mesh, isInside: boolean) {
+  const backButton = document.getElementById("back-button") as HTMLElement;
+  const tabs = document.querySelector(".tabs") as HTMLElement;
+
+  if (isInside) {
+    backButton.style.display = "block"; // ボタンを表示
+    backButton.style.visibility = "visible"; // ボタンを表示
+    tabs.style.display = "none"; // タブを非表示
+    if (!sphere.userData.isPlaying) {
+      sphere.userData.video.play(); // 動画を再生
+      sphere.userData.isPlaying = true;
+    }
+  } else {
+    backButton.style.display = "none"; // ボタンを非表示
+    backButton.style.visibility = "hidden"; // ボタンを非表示
+    tabs.style.display = "block"; // タブを表示
+    if (sphere.userData.isPlaying) {
+      sphere.userData.video.pause(); // 動画を停止
+      sphere.userData.isPlaying = false;
+    }
+  }
+}
+
+function handleImageSphereInsideStateChange(sphere: Mesh, isInside: boolean) {
+  const backButton = document.getElementById("back-button") as HTMLElement;
+  const tabs = document.querySelector(".tabs") as HTMLElement;
+
+  if (isInside) {
+    backButton.style.display = "block"; // ボタンを表示
+    backButton.style.visibility = "visible"; // ボタンを表示
+    tabs.style.display = "none"; // タブを非表示
+  } else {
+    backButton.style.display = "none"; // ボタンを非表示
+    backButton.style.visibility = "hidden"; // ボタンを非表示
+    tabs.style.display = "block"; // タブを表示
+  }
+}
+
+export function updateVideoSpheres(
+  spheres: Mesh[],
+  initialPositions: Vector3[],
+  elapsedTime: number,
+  amplitude: number,
+  frequency: number
+) {
+  updateSpheres(
+    spheres,
+    initialPositions,
+    elapsedTime,
+    amplitude,
+    frequency,
+    previousIsInsideSphereStates_Video,
+    handleVideoSphereInsideStateChange
+  );
+}
+
 export function updateImageSpheres(
   spheres: Mesh[],
   initialPositions: Vector3[],
@@ -141,68 +186,13 @@ export function updateImageSpheres(
   amplitude: number,
   frequency: number
 ) {
-  spheres.forEach((sphere, index) => {
-    const initialPosition = initialPositions[index];
-    const yOffset = amplitude * Math.sin(frequency * elapsedTime);
-    const backButton = document.getElementById("back-button") as HTMLElement;
-    const tabs = document.querySelector(".tabs") as HTMLElement;
-
-    // カメラが球体の中にいるかどうかをチェック
-    const distanceToCamera = camera.position.distanceTo(sphere.position);
-    isInsideSphere = distanceToCamera < sphere.userData.radius;
-
-    // 初回チェック用にpreviousIsInsideSphereStatesを初期化
-    if (previousIsInsideSphereStates_Image.length < spheres.length) {
-      previousIsInsideSphereStates_Image.push(!isInsideSphere);
-    }
-
-    // 状態が変わったときだけ処理を実行
-    if (isInsideSphere !== previousIsInsideSphereStates_Image[index]) {
-      if (isInsideSphere) {
-        backButton.style.display = "block"; // ボタンを表示
-        backButton.style.visibility = "visible"; /* ボタンを表示 */
-        tabs.style.display = "none"; // タブを非表示
-      } else {
-        backButton.style.display = "none"; // ボタンを非表示
-        backButton.style.visibility = "hidden"; /* ボタンを非表示 */
-        tabs.style.display = "block"; // タブを表示
-      }
-      // 状態を更新
-      previousIsInsideSphereStates_Image[index] = isInsideSphere;
-    }
-
-    if (!isInsideSphere) {
-      sphere.position.y = initialPosition.y + yOffset;
-      if (sphere.userData.metalBox) {
-        const radius = (sphere.geometry as SphereGeometry).parameters.radius;
-        sphere.userData.metalBox.position.set(
-          initialPosition.x,
-          initialPosition.y - radius - 2 + yOffset,
-          initialPosition.z
-        );
-      }
-
-      Object.keys(sphere.userData).forEach((key) => {
-        if (key.startsWith("textMesh")) {
-          const textMesh = sphere.userData[key];
-          const orbitRadius = 6;
-          const orbitSpeed = 1.5;
-          const letterIndex = parseInt(key.replace("textMesh", ""), 10);
-          const angle = orbitSpeed * elapsedTime - letterIndex * 0.2; // 文字ごとに逆方向にずらす
-          textMesh.position.x =
-            sphere.position.x + orbitRadius * Math.cos(angle);
-          textMesh.position.z =
-            sphere.position.z + orbitRadius * Math.sin(angle);
-          textMesh.position.y =
-            sphere.position.y + orbitRadius * Math.sin(angle);
-        }
-      });
-    } else {
-      sphere.position.y = initialPosition.y;
-      if (sphere.userData.metalBox) {
-        sphere.userData.metalBox.position.y =
-          initialPosition.y - sphere.userData.radius - 1;
-      }
-    }
-  });
+  updateSpheres(
+    spheres,
+    initialPositions,
+    elapsedTime,
+    amplitude,
+    frequency,
+    previousIsInsideSphereStates_Image,
+    handleImageSphereInsideStateChange
+  );
 }

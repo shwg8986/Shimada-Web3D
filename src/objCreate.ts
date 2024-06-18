@@ -137,7 +137,7 @@ export function createImageSpheres_smartPhone() {
     5,
     new Vector3(0, 8, -pentagon_radius),
     new Euler(0, 0, 0),
-    new URL("../360Images/paris.png", import.meta.url).toString(),
+    new URL("../360Images/paris.jpg", import.meta.url).toString(),
     "Paris Photo",
     font
   );

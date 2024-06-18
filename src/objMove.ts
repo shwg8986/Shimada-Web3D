@@ -146,7 +146,7 @@ function handleVideoSphereInsideStateChange(sphere: Mesh, isInside: boolean) {
   }
 }
 
-function handleImageSphereInsideStateChange(sphere: Mesh, isInside: boolean) {
+function handleImageSphereInsideStateChange(isInside: boolean) {
   const backButton = document.getElementById("back-button") as HTMLElement;
   const tabs = document.querySelector(".tabs") as HTMLElement;
 
@@ -193,6 +193,7 @@ export function updateImageSpheres(
     amplitude,
     frequency,
     previousIsInsideSphereStates_Image,
-    handleImageSphereInsideStateChange
+    // handleImageSphereInsideStateChange
+    (_sphere, isInside) => handleImageSphereInsideStateChange(isInside)
   );
 }

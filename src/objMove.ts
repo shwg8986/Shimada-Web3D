@@ -77,6 +77,7 @@ export function updateVideoSpheres(
     if (isInsideSphere !== previousIsInsideSphereStates_Video[index]) {
       if (isInsideSphere) {
         backButton.style.display = "block"; // ボタンを表示
+        backButton.style.visibility = "visible"; /* ボタンを表示 */
         tabs.style.display = "none"; // タブを非表示
         if (!sphere.userData.isPlaying) {
           sphere.userData.video.play(); // 動画を再生
@@ -84,6 +85,7 @@ export function updateVideoSpheres(
         }
       } else {
         backButton.style.display = "none"; // ボタンを非表示
+        backButton.style.visibility = "hidden"; /* ボタンを非表示 */
         tabs.style.display = "block"; // タブを表示
         if (sphere.userData.isPlaying) {
           sphere.userData.video.pause(); // 動画を停止
@@ -158,9 +160,11 @@ export function updateImageSpheres(
     if (isInsideSphere !== previousIsInsideSphereStates_Image[index]) {
       if (isInsideSphere) {
         backButton.style.display = "block"; // ボタンを表示
+        backButton.style.visibility = "visible"; /* ボタンを表示 */
         tabs.style.display = "none"; // タブを非表示
       } else {
         backButton.style.display = "none"; // ボタンを非表示
+        backButton.style.visibility = "hidden"; /* ボタンを非表示 */
         tabs.style.display = "block"; // タブを表示
       }
       // 状態を更新

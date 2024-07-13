@@ -71,6 +71,7 @@ export function setIsCameraMoving(value: boolean) {
 
 function init() {
   try {
+    console.log("start init()"); // ログの出力テスト
     setupScene(); // シーンの設定
     setupCamera(); // カメラの設定
     setupRenderer(); // レンダラーの設定

@@ -112,7 +112,7 @@ export function createVideoSpheres_PC() {
     ),
     new Euler(0, MathUtils.degToRad(288), 0),
     // "../shortVideo/cruiseThai3d.MP4",
-    new URL("../shortVideo/cruiseThai3d.MP4", import.meta.url).toString(),
+    new URL("../shortVideo/cruiseThai3d.mp4", import.meta.url).toString(),
     "Bangkok Video",
     font
   );

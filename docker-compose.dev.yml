@@ -1,0 +1,48 @@
+# 開発環境用
+version: "3.9"
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - .:/app
+        - node_modules:/app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+    command: ["npm", "run", "dev"]
+    profiles: ["dev"]
+
+  preview:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    volumes:
+      - .:/app
+        - node_modules:/app/node_modules
+    ports:
+      - "5000:5000"
+    environment:
+      NODE_ENV: development
+    command: ["npm", "run", "preview"]
+    profiles: ["prod"]
+
+volumes:
+  node_modules:
+# 初回の起動
+# 初めて開発環境を立ち上げる際には、イメージのビルドとコンテナの起動を行うため、以下のコマンドを使用：
+# (docker-compose -f docker-compose.dev.yml up --build)
+
+# docker-compose -f docker-compose.dev.yml up --build app
+# docker-compose -f docker-compose.dev.yml up --build preview
+
+# 再起動
+# すでにイメージがビルドされており、コンテナを再起動するだけでよい場合は、--buildオプションを省略できる。これにより、ビルドプロセスをスキップして素早くコンテナを起動できる：
+# docker-compose -f docker-compose.dev.yml up
+
+# コンテナの停止と削除
+# 開発が終わった後、コンテナを停止し、リソースを解放するためには以下のコマンドを使用する：
+# docker-compose -f docker-compose.dev.yml down
+

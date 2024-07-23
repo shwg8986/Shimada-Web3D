@@ -380,9 +380,29 @@ p {
 }
 
 .review-none {
-  background-color: #ba8c0e; /* 赤色 */
+  background-color: #999; /* 赤色 */
 }
 
 .review-yes {
-  background-color: #36baf7; /* 水色 */
+  background-image: linear-gradient(
+    90deg,
+    rgb(64, 151, 226),
+    rgb(18, 207, 217)
+  );
+}
+
+.extrainfo {
+  display: inline-block;
+  padding: 3px 6px;
+  border-radius: 4px;
+  font-size: 0.7em;
+  color: #fff;
+  background: linear-gradient(
+    45deg,
+    #b67b03 0%,
+    #daaf08 45%,
+    #daaf08 85%,
+    #b67b03 90% 100%
+  );
+  margin-left: 4px;
 }

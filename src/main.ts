@@ -10,6 +10,11 @@
 
 import "./style.css";
 import * as THREE from "three";
+import {
+  showLoadingScreen,
+  hideLoadingScreen,
+  startIntroAnimation,
+} from "./loadingAnimation";
 import { FontLoader, Font } from "three/addons/loaders/FontLoader.js";
 
 import {
@@ -69,23 +74,72 @@ export function setIsCameraMoving(value: boolean) {
   isCameraMoving = value;
 }
 
-function init() {
+// function init() {
+//   try {
+//     console.log("start init()"); // ログの出力テスト
+//     setupScene(); // シーンの設定
+//     setupCamera(); // カメラの設定
+//     setupRenderer(); // レンダラーの設定
+//     setupControls(); // カメラ制御の設定
+//     setUpCompass(); // コンパスの設定
+//     setupWater(); // 水面の設定
+//     setupSkybox(); // 空の設定
+//     initializeAccordions(); // アコーディオンの初期化
+//     setupEventListeners(); // イベントリスナーの設定
+//     loadFont(); // フォントの読み込み
+//     animate(); // アニメーションの開始
+//     initOverlay(handleTabClick); // オーバーレイの初期化
+//   } catch (error) {
+//     console.error("Initialization error:", error);
+//   }
+// }
+
+async function init() {
+  console.log("start init()"); // ログの出力テスト
+  showLoadingScreen();
+  const startTime = Date.now();
   try {
-    console.log("start init()"); // ログの出力テスト
-    setupScene(); // シーンの設定
-    setupCamera(); // カメラの設定
-    setupRenderer(); // レンダラーの設定
-    setupControls(); // カメラ制御の設定
-    setUpCompass(); // コンパスの設定
-    setupWater(); // 水面の設定
-    setupSkybox(); // 空の設定
-    initializeAccordions(); // アコーディオンの初期化
-    setupEventListeners(); // イベントリスナーの設定
-    loadFont(); // フォントの読み込み
-    animate(); // アニメーションの開始
-    initOverlay(handleTabClick); // オーバーレイの初期化
+    // 非同期で各設定を実行
+    await Promise.all([
+      setupScene(),
+      setupCamera(),
+      setupRenderer(),
+      setupControls(),
+      setUpCompass(),
+      setupWater(),
+      setupSkybox(),
+      initializeAccordions(),
+      setupEventListeners(),
+      loadFont(),
+      initOverlay(handleTabClick),
+    ]);
+    // 初期化処理が完了した時間を記録
+    const endTime = Date.now();
+    const elapsedTime = endTime - startTime;
+
+    // 最低1秒間のローディングを確保
+    const remainingTime = Math.max(0, 1000 - elapsedTime);
+
+    setTimeout(() => {
+      hideLoadingScreen();
+      animate();
+      startIntroAnimation();
+    }, remainingTime);
+    // remainingTime ミリ秒後に、コールバック関数がタスクキューに追加される。
+    // しかし、この時点でまだ Promise.all の処理が完了していない可能性がある。
+    // Promise.all の処理が完了し、そのコールバックが実行される。
+    // その後、イベントループが setTimeout のコールバックを処理し、ローディング画面を非表示にする。
   } catch (error) {
-    console.error("Initialization error:", error);
+    console.error("初期化エラー:", error);
+
+    // エラー時も最低2秒間のローディングを確保
+    const endTime = Date.now();
+    const elapsedTime = endTime - startTime;
+    const remainingTime = Math.max(0, 1000 - elapsedTime);
+
+    setTimeout(() => {
+      hideLoadingScreen();
+    }, remainingTime);
   }
 }
 

@@ -1,4 +1,5 @@
 import { Euler, Vector3, MathUtils } from "three";
+import { isFadingActive } from "./loadingAnimation";
 import { camera } from "./setup";
 import nipplejs from "nipplejs";
 
@@ -156,6 +157,11 @@ export function moveCameraInsideSphere(
   sphereRotation: Euler,
   onComplete: () => void
 ) {
+  if (isFadingActive()) {
+    // フェードイン中は即座にonCompleteを呼び出す
+    onComplete();
+    return;
+  }
   const duration = 300;
   const startPosition = camera.position.clone();
   const startRotation = camera.rotation.clone();

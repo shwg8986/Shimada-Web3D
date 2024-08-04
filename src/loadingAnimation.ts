@@ -58,7 +58,7 @@ function startTypingAnimation(): Promise<void> {
       if (i < text.length) {
         typingElement.innerHTML += text.charAt(i);
         i++;
-        setTimeout(typeWriter, 70);
+        setTimeout(typeWriter, 50);
       } else {
         resolve();
       }

@@ -144,14 +144,6 @@ async function init() {
 }
 
 // フォントの読み込み
-// function loadFont() {
-//   const fontLoader = new FontLoader();
-//   fontLoader.load("../fonts/helvetiker_regular.typeface.json", (loadedFont) => {
-//     font = loadedFont;
-//     setupInitialObjects();
-//   });
-// }
-
 function loadFont() {
   const fontLoader = new FontLoader();
   fontLoader.load(

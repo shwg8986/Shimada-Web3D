@@ -117,6 +117,66 @@ export function createPlaneWithVideo(
 }
 
 // ビデオ球体の作成関数
+// export function createVideoSphere(
+//   radius: number,
+//   position: Vector3,
+//   rotation: Euler,
+//   videoSrc: string,
+//   title: string,
+//   font: Font
+// ) {
+//   const video = document.createElement("video");
+//   video.src = videoSrc;
+//   video.loop = true;
+//   video.muted = true;
+//   video.crossOrigin = "anonymous";
+//   video.setAttribute("playsinline", "");
+//   video.setAttribute("preload", "true");
+//   video.setAttribute("autoplay", "true");
+//   video.pause();
+//   // video.load();
+
+//   const videoTexture = new VideoTexture(video);
+//   videoTexture.minFilter = LinearFilter;
+//   videoTexture.magFilter = LinearFilter;
+//   videoTexture.format = RGBAFormat;
+
+//   // 動画の最初のフレームがロードされたら再生を開始する
+//   video.addEventListener("loadeddata", () => {
+//     videoTexture.needsUpdate = true;
+//     // console.log("loadeddata");
+//   });
+
+//   const sphereGeometry = new SphereGeometry(radius, 32, 32);
+//   const sphereMaterial = new ShaderMaterial({
+//     uniforms: { videoTexture: { value: videoTexture } },
+//     vertexShader: vertexShader_3d,
+//     fragmentShader: fragmentShader_3d,
+//     side: BackSide,
+//   });
+
+//   const videoSphere = new Mesh(sphereGeometry, sphereMaterial);
+//   videoSphere.position.copy(position);
+//   videoSphere.rotation.copy(rotation);
+//   videoSphere.userData = { video, isPlaying: false, radius };
+//   scene.add(videoSphere);
+//   videoSpheres.push(videoSphere);
+//   videoInitialPositions.push(position.clone());
+
+//   const textMeshes = createTextMeshes(title, font, 1, 0x000000);
+//   textMeshes.forEach((textMesh, index) => {
+//     textMesh.position.set(position.x, position.y, position.z);
+//     textMesh.rotation.set(rotation.x, rotation.y, rotation.z);
+//     scene.add(textMesh);
+//     videoSphere.userData[`textMesh${index}`] = textMesh;
+//   });
+
+//   const metalBox = createMetalBox(position, rotation, radius, 5, 2, 5);
+//   videoSphere.userData.metalBox = metalBox;
+
+//   return videoSphere;
+// }
+
 export function createVideoSphere(
   radius: number,
   position: Vector3,
@@ -134,18 +194,71 @@ export function createVideoSphere(
   video.setAttribute("preload", "true");
   video.setAttribute("autoplay", "true");
   video.pause();
-  // video.load();
 
   const videoTexture = new VideoTexture(video);
   videoTexture.minFilter = LinearFilter;
   videoTexture.magFilter = LinearFilter;
   videoTexture.format = RGBAFormat;
 
+  // ローディング用のテクスチャを作成
+  const loadingCanvas = document.createElement("canvas");
+  const loadingContext = loadingCanvas.getContext("2d")!;
+  const scale = 2; // 解像度の倍率
+  loadingCanvas.width = 512 * scale;
+  loadingCanvas.height = 512 * scale;
+  loadingContext.fillStyle = "black";
+  const gradient = loadingContext.createLinearGradient(
+    0,
+    0,
+    loadingCanvas.width,
+    loadingCanvas.height
+  );
+  gradient.addColorStop(0, "black"); // 左上は黒
+  gradient.addColorStop(1, "gray"); // 右下は灰色
+
+  // 背景を描画
+  loadingContext.fillStyle = gradient;
+  loadingContext.fillRect(0, 0, loadingCanvas.width, loadingCanvas.height);
+
+  // テキスト
+  const textWidth = 400 * scale; // テキストエリアの幅
+  const textHeight = 50 * scale; // テキストエリアの高
+  const textX = (loadingCanvas.width - textWidth) / 2; // 中央に配置
+  const textY = (loadingCanvas.height - textHeight) / 2; // 中央に配置
+  loadingContext.clearRect(textX, textY, textWidth, textHeight); // テキストエリアをクリア
+
+  loadingContext.fillStyle = "black";
+  loadingContext.font = "48px bold sans-serif";
+  loadingContext.textAlign = "center";
+  loadingContext.textBaseline = "middle";
+  loadingContext.fillText("Now Loading...", 256 * scale, 256 * scale);
+
+  const loadingTexture = new CanvasTexture(loadingCanvas);
+  const loadingMaterial = new MeshBasicMaterial({
+    map: loadingTexture,
+    transparent: true,
+    opacity: 0.7,
+  });
+  const loadingGeometry = new SphereGeometry(radius, 32, 32);
+  const loadingSphere = new Mesh(loadingGeometry, loadingMaterial);
+  loadingSphere.position.copy(position);
+  loadingSphere.rotation.set(rotation.x, rotation.y - 1.5, rotation.z);
+  scene.add(loadingSphere);
+
   // 動画の最初のフレームがロードされたら再生を開始する
   video.addEventListener("loadeddata", () => {
-    videoTexture.needsUpdate = true;
-    // console.log("loadeddata");
+    videoTexture.needsUpdate = true; // 動画テクスチャが完全にロードされたことをThree.jsに通知
+    scene.remove(loadingSphere); // ローディング表示を削除
   });
+
+  // Loadingのテスト
+  // video.addEventListener("loadeddata", () => {
+  //   // 一定時間（例：3秒）経過後にローディング表示を削除
+  //   setTimeout(() => {
+  //     videoTexture.needsUpdate = true;
+  //     scene.remove(loadingSphere); // ローディング表示を削除
+  //   }, 10000); // 10秒間表示
+  // });
 
   const sphereGeometry = new SphereGeometry(radius, 32, 32);
   const sphereMaterial = new ShaderMaterial({
@@ -186,6 +299,51 @@ export function createImageSphere(
   title: string,
   font: Font
 ) {
+  // ローディング用のテクスチャ
+  const loadingCanvas = document.createElement("canvas");
+  const loadingContext = loadingCanvas.getContext("2d")!;
+  const scale = 2; // 解像度の倍率
+  loadingCanvas.width = 512 * scale;
+  loadingCanvas.height = 512 * scale;
+  loadingContext.fillStyle = "black";
+  const gradient = loadingContext.createLinearGradient(
+    0,
+    0,
+    loadingCanvas.width,
+    loadingCanvas.height
+  );
+  gradient.addColorStop(0, "black"); // 左上は黒
+  gradient.addColorStop(1, "gray"); // 右下は灰色
+
+  // 背景を描画
+  loadingContext.fillStyle = gradient;
+  loadingContext.fillRect(0, 0, loadingCanvas.width, loadingCanvas.height);
+
+  // テキスト
+  const textWidth = 400 * scale; // テキストエリアの幅
+  const textHeight = 50 * scale; // テキストエリアの高
+  const textX = (loadingCanvas.width - textWidth) / 2; // 中央に配置
+  const textY = (loadingCanvas.height - textHeight) / 2; // 中央に配置
+  loadingContext.clearRect(textX, textY, textWidth, textHeight); // テキストエリアをクリア
+
+  loadingContext.fillStyle = "black";
+  loadingContext.font = "48px bold sans-serif";
+  loadingContext.textAlign = "center";
+  loadingContext.textBaseline = "middle";
+  loadingContext.fillText("Now Loading...", 256 * scale, 256 * scale);
+
+  const loadingTexture = new CanvasTexture(loadingCanvas);
+  const loadingMaterial = new MeshBasicMaterial({
+    map: loadingTexture,
+    transparent: true,
+    opacity: 0.7,
+  });
+  const loadingGeometry = new SphereGeometry(radius, 32, 32);
+  const loadingSphere = new Mesh(loadingGeometry, loadingMaterial);
+  loadingSphere.position.copy(position);
+  loadingSphere.rotation.set(rotation.x, rotation.y - 1.5, rotation.z);
+  scene.add(loadingSphere);
+
   const textureLoader = new TextureLoader();
   textureLoader.setCrossOrigin("anonymous");
   textureLoader.load(imageSrc, (imageTexture) => {
@@ -208,6 +366,9 @@ export function createImageSphere(
     scene.add(imageSphere);
     imageSpheres.push(imageSphere);
     imageInitialPositions.push(position.clone());
+
+    imageTexture.needsUpdate = true; // 画像テクスチャが完全にロードされたことをThree.jsに通知
+    scene.remove(loadingSphere); // ローディングスフィアを削除
 
     const textMeshes = createTextMeshes(title, font, 1, 0x000000);
     textMeshes.forEach((textMesh, index) => {

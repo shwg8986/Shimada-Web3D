@@ -61,10 +61,12 @@ export function setupJoystick() {
     });
 
     joystick.on("move", (_, data) => {
-      moveForward = data.direction.y === "up";
-      moveBackward = data.direction.y === "down";
-      moveLeft = data.direction.x === "left";
-      moveRight = data.direction.x === "right";
+      if (data.direction) {
+        moveForward = data.direction.y === "up";
+        moveBackward = data.direction.y === "down";
+        moveLeft = data.direction.x === "left";
+        moveRight = data.direction.x === "right";
+      }
     });
 
     joystick.on("end", () => {

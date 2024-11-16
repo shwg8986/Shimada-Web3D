@@ -31,7 +31,7 @@ npm run preview
 firebase deploy
 ```
 
-## 参考サイト
+## Firebaseデプロイ手順 参考サイト
 
 https://qiita.com/shikichee/items/e547fa2a22d2f6991dac
 

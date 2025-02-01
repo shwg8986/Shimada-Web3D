@@ -419,6 +419,19 @@ p {
   color: #555;
 } */
 
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.profile-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
 .icon-container {
   display: flex;
   flex-direction: column; /* 縦に並べる */

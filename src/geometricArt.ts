@@ -1,17 +1,20 @@
 // 幾何学アート生成関数
 
 export type ArtType = 'ripple' | 'spiral' | 'grid' | 'voronoi' | 'radial';
+export type PerformanceMode = 'high' | 'low';
 
 export class GeometricArtGenerator {
   private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
   private animationTime: number = 0;
+  private performanceMode: PerformanceMode;
 
-  constructor(width: number = 1024, height: number = 512) {
+  constructor(width: number = 1024, height: number = 512, performanceMode: PerformanceMode = 'high') {
     this.canvas = document.createElement('canvas');
     this.canvas.width = width;
     this.canvas.height = height;
     this.ctx = this.canvas.getContext('2d')!;
+    this.performanceMode = performanceMode;
   }
 
   getCanvas(): HTMLCanvasElement {
@@ -28,6 +31,7 @@ export class GeometricArtGenerator {
     const ctx = this.ctx;
     const centerX = width / 2;
     const centerY = height / 2;
+    const isLowPerf = this.performanceMode === 'low';
 
     // 動的なグラデーション背景
     const gradient = ctx.createRadialGradient(
@@ -44,8 +48,8 @@ export class GeometricArtGenerator {
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, width, height);
 
-    // 複数層の回転する多角形
-    const polygonLayers = 5;
+    // 複数層の回転する多角形（スマホでは3層、PCでは5層）
+    const polygonLayers = isLowPerf ? 3 : 5;
     for (let layer = 0; layer < polygonLayers; layer++) {
       const sides = 6 + layer;
       const radius = 80 + layer * 40;
@@ -84,8 +88,8 @@ export class GeometricArtGenerator {
       }
     }
 
-    // パーティクルシステム（軌道を描く点）
-    const particleCount = 80;
+    // パーティクルシステム（軌道を描く点）（スマホでは30、PCでは80）
+    const particleCount = isLowPerf ? 30 : 80;
     for (let i = 0; i < particleCount; i++) {
       const angle = (i / particleCount) * Math.PI * 2;
       const distance = 150 + 80 * Math.sin(this.animationTime * 2 + i * 0.3);
@@ -104,8 +108,8 @@ export class GeometricArtGenerator {
       ctx.fill();
     }
 
-    // フラクタル風の線パターン
-    const lineCount = 12;
+    // フラクタル風の線パターン（スマホでは6本、PCでは12本）
+    const lineCount = isLowPerf ? 6 : 12;
     for (let i = 0; i < lineCount; i++) {
       const baseAngle = (i / lineCount) * Math.PI * 2;
       const rotation = this.animationTime * 0.4;
@@ -114,8 +118,9 @@ export class GeometricArtGenerator {
       ctx.strokeStyle = `hsla(${(i * 30 + this.animationTime * 40) % 360}, 65%, 55%, 0.4)`;
       ctx.lineWidth = 1.5;
 
-      for (let j = 0; j < 50; j++) {
-        const t = j / 50;
+      const pointsPerLine = isLowPerf ? 25 : 50;
+      for (let j = 0; j < pointsPerLine; j++) {
+        const t = j / pointsPerLine;
         const angle = baseAngle + rotation + Math.sin(t * Math.PI * 3 + this.animationTime) * 0.5;
         const radius = 50 + t * 180 + Math.sin(t * Math.PI * 2 + this.animationTime * 2) * 20;
         const x = centerX + Math.cos(angle) * radius;
@@ -130,14 +135,15 @@ export class GeometricArtGenerator {
       ctx.stroke();
     }
 
-    // 中央の複雑なローズカーブ
+    // 中央の複雑なローズカーブ（スマホでは低解像度）
     const petalCount = 5;
     ctx.beginPath();
     ctx.strokeStyle = `hsla(${this.animationTime * 60 % 360}, 80%, 70%, 0.8)`;
     ctx.lineWidth = 3;
 
-    for (let i = 0; i <= 360; i++) {
-      const angle = (i / 180) * Math.PI;
+    const roseSteps = isLowPerf ? 180 : 360;
+    for (let i = 0; i <= roseSteps; i++) {
+      const angle = (i / (roseSteps / 2)) * Math.PI;
       const k = petalCount + Math.sin(this.animationTime * 0.5) * 2;
       const r = 60 * Math.cos(k * angle);
       const x = centerX + r * Math.cos(angle + this.animationTime * 0.3);
@@ -162,22 +168,24 @@ export class GeometricArtGenerator {
     ctx.arc(centerX, centerY, 30 + Math.sin(this.animationTime * 2) * 5, 0, Math.PI * 2);
     ctx.fill();
 
-    // 外周のエネルギーリング
-    const ringCount = 3;
-    for (let i = 0; i < ringCount; i++) {
-      const baseRadius = 280 + i * 30;
-      const offset = (this.animationTime + i * 2) % 6;
-      const radius = baseRadius + Math.sin(this.animationTime * 2 + i) * 10;
+    // 外周のエネルギーリング（スマホでは省略）
+    if (!isLowPerf) {
+      const ringCount = 3;
+      for (let i = 0; i < ringCount; i++) {
+        const baseRadius = 280 + i * 30;
+        const offset = (this.animationTime + i * 2) % 6;
+        const radius = baseRadius + Math.sin(this.animationTime * 2 + i) * 10;
 
-      ctx.globalAlpha = 0.5 - i * 0.1;
-      ctx.strokeStyle = `hsla(${(this.animationTime * 50 + i * 120) % 360}, 75%, 65%, 1)`;
-      ctx.lineWidth = 3;
-      ctx.setLineDash([10, 10]);
-      ctx.lineDashOffset = -offset * 10;
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.setLineDash([]);
+        ctx.globalAlpha = 0.5 - i * 0.1;
+        ctx.strokeStyle = `hsla(${(this.animationTime * 50 + i * 120) % 360}, 75%, 65%, 1)`;
+        ctx.lineWidth = 3;
+        ctx.setLineDash([10, 10]);
+        ctx.lineDashOffset = -offset * 10;
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
     }
 
     ctx.globalAlpha = 1;
@@ -189,6 +197,7 @@ export class GeometricArtGenerator {
     const ctx = this.ctx;
     const centerX = width / 2;
     const centerY = height / 2;
+    const isLowPerf = this.performanceMode === 'low';
 
     // グラデーション背景
     const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, width / 2);
@@ -197,15 +206,16 @@ export class GeometricArtGenerator {
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, width, height);
 
-    // スパイラルを描画
-    const spiralCount = 5;
+    // スパイラルを描画（スマホでは3本、PCでは5本）
+    const spiralCount = isLowPerf ? 3 : 5;
     for (let s = 0; s < spiralCount; s++) {
       ctx.beginPath();
       ctx.strokeStyle = `hsl(${(s * 60 + this.animationTime * 20) % 360}, 70%, 50%)`;
       ctx.lineWidth = 3;
 
       let angle = s * (Math.PI * 2 / spiralCount);
-      for (let i = 0; i < 200; i++) {
+      const spiralPoints = isLowPerf ? 100 : 200;
+      for (let i = 0; i < spiralPoints; i++) {
         const t = i / 20;
         const r = t * 15 + this.animationTime * 10;
         const x = centerX + r * Math.cos(angle + this.animationTime * 0.5);
@@ -226,12 +236,13 @@ export class GeometricArtGenerator {
   drawGridPattern() {
     const { width, height } = this.canvas;
     const ctx = this.ctx;
+    const isLowPerf = this.performanceMode === 'low';
 
     // 背景
     ctx.fillStyle = '#0d1b2a';
     ctx.fillRect(0, 0, width, height);
 
-    const gridSize = 60;
+    const gridSize = isLowPerf ? 80 : 60;
     const cols = Math.ceil(width / gridSize);
     const rows = Math.ceil(height / gridSize);
 
@@ -269,14 +280,15 @@ export class GeometricArtGenerator {
   drawVoronoiPattern() {
     const { width, height } = this.canvas;
     const ctx = this.ctx;
+    const isLowPerf = this.performanceMode === 'low';
 
     // 背景
     ctx.fillStyle = '#240046';
     ctx.fillRect(0, 0, width, height);
 
-    // ボロノイセルの中心点を生成
+    // ボロノイセルの中心点を生成（スマホでは15点、PCでは30点）
     const points: { x: number; y: number; color: string }[] = [];
-    const pointCount = 30;
+    const pointCount = isLowPerf ? 15 : 30;
 
     for (let i = 0; i < pointCount; i++) {
       const angle = (i / pointCount) * Math.PI * 2;
@@ -289,7 +301,7 @@ export class GeometricArtGenerator {
     }
 
     // 各ピクセルを最も近い点の色で塗る（簡易的なボロノイ）
-    const step = 4; // パフォーマンスのためにピクセルをスキップ
+    const step = isLowPerf ? 8 : 4; // スマホでは8ピクセルスキップ、PCでは4ピクセル
 
     for (let x = 0; x < width; x += step) {
       for (let y = 0; y < height; y += step) {
@@ -329,6 +341,7 @@ export class GeometricArtGenerator {
     const ctx = this.ctx;
     const centerX = width / 2;
     const centerY = height / 2;
+    const isLowPerf = this.performanceMode === 'low';
 
     // 深い宇宙のような背景
     const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, width / 2);
@@ -338,9 +351,9 @@ export class GeometricArtGenerator {
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, width, height);
 
-    // ノード（人）の位置を定義
+    // ノード（人）の位置を定義（スマホでは12個、PCでは25個）
     const nodes: { x: number; y: number; vx: number; vy: number; size: number; hue: number; connections: number[] }[] = [];
-    const nodeCount = 25;
+    const nodeCount = isLowPerf ? 12 : 25;
 
     // ノードを配置（有機的に動く）
     for (let i = 0; i < nodeCount; i++) {
@@ -509,8 +522,8 @@ export class GeometricArtGenerator {
     ctx.lineWidth = 2;
     ctx.stroke();
 
-    // ハブから放射されるエネルギー
-    const rayCount = 8;
+    // ハブから放射されるエネルギー（スマホでは4本、PCでは8本）
+    const rayCount = isLowPerf ? 4 : 8;
     for (let i = 0; i < rayCount; i++) {
       const angle = (i / rayCount) * Math.PI * 2 + this.animationTime * 0.5;
       const rayLength = 30 + Math.sin(this.animationTime * 3 + i) * 15;

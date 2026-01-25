@@ -24,6 +24,7 @@ import { FBXLoader } from "three/addons/loaders/FBXLoader.js";
 import { Font } from "three/addons/loaders/FontLoader.js";
 import { scene } from "./setup.ts";
 import { isMobile } from "./utils.ts";
+import { GeometricArtGenerator, ArtType } from "./geometricArt.ts";
 
 let drone1: Group;
 let drone2: Group;
@@ -33,6 +34,7 @@ const videoSpheres: Mesh[] = [];
 const videoInitialPositions: Vector3[] = [];
 const imageSpheres: Mesh[] = [];
 const imageInitialPositions: Vector3[] = [];
+const artGenerators: GeometricArtGenerator[] = [];
 
 // ビデオパネルの作成関数
 export function createPlaneWithVideo(
@@ -112,6 +114,87 @@ export function createPlaneWithVideo(
     videoTexture.needsUpdate = true;
     // console.log("loadeddata");
   });
+
+  return plane;
+}
+
+// 幾何学アートパネルの作成関数
+export function createPlaneWithGeometricArt(
+  width: number,
+  height: number,
+  fontColor: string,
+  strokeColor: string,
+  position: Vector3,
+  rotation: Euler,
+  contentId: string,
+  artType: ArtType,
+  title: string
+) {
+  // 幾何学アート生成
+  const artGenerator = new GeometricArtGenerator(1024, 512);
+  artGenerator.draw(artType);
+  artGenerators.push(artGenerator);
+
+  // キャンバスからテクスチャを作成
+  const artTexture = new CanvasTexture(artGenerator.getCanvas());
+  artTexture.needsUpdate = true;
+
+  const material = new MeshBasicMaterial({
+    map: artTexture,
+    side: DoubleSide,
+  });
+
+  const geometry = new PlaneGeometry(width, height);
+  const plane = new Mesh(geometry, material);
+  plane.position.copy(position);
+  plane.rotation.copy(rotation);
+  plane.userData.contentId = contentId;
+  plane.userData.artGenerator = artGenerator;
+  plane.userData.artTexture = artTexture;
+  plane.userData.artType = artType;
+  scene.add(plane);
+  tabObjects.push(plane);
+
+  // タイトルテキストを改善（視認性向上）
+  const titleCanvas = document.createElement("canvas");
+  const context = titleCanvas.getContext("2d")!;
+  titleCanvas.width = 1024;
+  titleCanvas.height = 256;
+
+  // テキストに影と縁取りを追加して視認性を向上
+  context.font = "bold 80px sans-serif";
+  context.textAlign = "center";
+  context.textBaseline = "middle";
+
+  // 影を追加
+  context.shadowColor = "rgba(0, 0, 0, 0.8)";
+  context.shadowBlur = 10;
+  context.shadowOffsetX = 3;
+  context.shadowOffsetY = 3;
+
+  // 縁取りを太く
+  context.strokeStyle = strokeColor;
+  context.lineWidth = 8;
+  context.strokeText(title, 512, 128);
+
+  // 本体のテキスト
+  context.shadowColor = "transparent";
+  context.fillStyle = fontColor;
+  context.fillText(title, 512, 128);
+
+  const titleTexture = new CanvasTexture(titleCanvas);
+  const titleMaterial = new MeshBasicMaterial({
+    map: titleTexture,
+    transparent: true,
+  });
+  const titleGeometry = new PlaneGeometry(width, height * 0.5);
+  const titlePlane = new Mesh(titleGeometry, titleMaterial);
+  titlePlane.position.copy(position);
+  titlePlane.rotation.copy(rotation);
+  titlePlane.position.y += height * 0.25;
+  titlePlane.position.z +=
+    rotation.y > Math.PI / 2 && rotation.y < (3 * Math.PI) / 2 ? -0.1 : 0.1;
+  scene.add(titlePlane);
 
   return plane;
 }
@@ -492,4 +575,5 @@ export {
   imageInitialPositions,
   drone1,
   drone2,
+  artGenerators,
 };

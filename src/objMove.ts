@@ -7,7 +7,7 @@ import {
   moveRight,
 } from "./cameraMoveControls.ts";
 import { camera, compassNeedle } from "./setup.ts";
-import { drone1, drone2 } from "./objCreateFunc.ts";
+import { drone1, drone2, tabObjects } from "./objCreateFunc.ts";
 
 // ドローンの位置を更新する関数
 export function updateDrones(elapsedTime: number) {
@@ -195,4 +195,18 @@ export function updateImageSpheres(
     previousIsInsideSphereStates_Image,
     (_sphere, isInside) => handleImageSphereInsideStateChange(isInside)
   );
+}
+
+// 幾何学アートの更新関数
+export function updateGeometricArt(deltaTime: number) {
+  tabObjects.forEach((plane) => {
+    if (plane.userData.artGenerator && plane.userData.artTexture) {
+      // アニメーション時間を更新
+      plane.userData.artGenerator.update(deltaTime);
+      // パターンを再描画
+      plane.userData.artGenerator.draw(plane.userData.artType);
+      // テクスチャを更新
+      plane.userData.artTexture.needsUpdate = true;
+    }
+  });
 }

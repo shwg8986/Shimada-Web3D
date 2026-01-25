@@ -130,8 +130,14 @@ export function createPlaneWithGeometricArt(
   artType: ArtType,
   title: string
 ) {
+  // モバイルかどうかで解像度とパフォーマンスモードを切り替え
+  const mobile = isMobile();
+  const canvasWidth = mobile ? 512 : 1024;
+  const canvasHeight = mobile ? 256 : 512;
+  const perfMode = mobile ? 'low' : 'high';
+
   // 幾何学アート生成
-  const artGenerator = new GeometricArtGenerator(1024, 512);
+  const artGenerator = new GeometricArtGenerator(canvasWidth, canvasHeight, perfMode);
   artGenerator.draw(artType);
   artGenerators.push(artGenerator);
 

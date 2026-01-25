@@ -8,6 +8,7 @@ import {
 } from "./cameraMoveControls.ts";
 import { camera, compassNeedle } from "./setup.ts";
 import { drone1, drone2, tabObjects } from "./objCreateFunc.ts";
+import { isMobile } from "./utils.ts";
 
 // ドローンの位置を更新する関数
 export function updateDrones(elapsedTime: number) {
@@ -198,11 +199,20 @@ export function updateImageSpheres(
 }
 
 // 幾何学アートの更新関数
+let frameCount = 0;
 export function updateGeometricArt(deltaTime: number) {
+  frameCount++;
+  const mobile = isMobile();
+
+  // スマホでは3フレームに1回のみ更新、PCは毎フレーム更新
+  const shouldUpdate = mobile ? (frameCount % 3 === 0) : true;
+
+  if (!shouldUpdate) return;
+
   tabObjects.forEach((plane) => {
     if (plane.userData.artGenerator && plane.userData.artTexture) {
-      // アニメーション時間を更新
-      plane.userData.artGenerator.update(deltaTime);
+      // アニメーション時間を更新（スマホでは3倍のdeltaTimeで補正）
+      plane.userData.artGenerator.update(mobile ? deltaTime * 3 : deltaTime);
       // パターンを再描画
       plane.userData.artGenerator.draw(plane.userData.artType);
       // テクスチャを更新

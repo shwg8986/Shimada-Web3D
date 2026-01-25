@@ -54,6 +54,7 @@ import {
   updateCameraControls,
   updateVideoSpheres,
   updateImageSpheres,
+  updateGeometricArt,
 } from "./objMove.ts";
 
 import { handleTabClick, initOverlay } from "./overlay.ts";
@@ -179,6 +180,7 @@ function setupInitialObjects() {
 function animate() {
   const clock = new THREE.Clock();
   function render() {
+    const deltaTime = clock.getDelta();
     const elapsedTime = clock.getElapsedTime();
     const amplitude = 1.5;
     const frequency = 1.0;
@@ -202,6 +204,9 @@ function animate() {
       amplitude,
       frequency
     );
+
+    // 幾何学アートの更新
+    updateGeometricArt(deltaTime);
 
     // カメラの移動処理
     if (controls) {

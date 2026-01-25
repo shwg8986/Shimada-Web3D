@@ -1,6 +1,6 @@
 import { Vector3, Euler, MathUtils } from "three";
 import {
-  createPlaneWithVideo,
+  createPlaneWithGeometricArt,
   createImageSphere,
   createVideoSphere,
 } from "./objCreateFunc.ts";
@@ -8,13 +8,13 @@ import { font } from "./main.ts";
 
 const pentagon_radius = 50;
 
-// ビデオパネルの作成
+// 幾何学アートパネルの作成（旧：ビデオパネル）
 export function createPlanesWithVideos() {
-  createPlaneWithVideo(
+  createPlaneWithGeometricArt(
     20,
     10,
-    "#fff",
-    "#000",
+    "#ffffff",
+    "#000000",
     new Vector3(
       -pentagon_radius * Math.sin(36 * (Math.PI / 180)),
       7,
@@ -22,16 +22,15 @@ export function createPlanesWithVideos() {
     ),
     new Euler(0, MathUtils.degToRad(36), 0),
     "content0",
-    // "../shortVideo/unity.mp4",
-    new URL("../shortVideo/unity.mp4", import.meta.url).toString(),
+    "ripple",
     "Profile"
   );
 
-  createPlaneWithVideo(
+  createPlaneWithGeometricArt(
     20,
     10,
-    "#fff",
-    "#000",
+    "#ffffff",
+    "#000000",
     new Vector3(
       -pentagon_radius * Math.sin(72 * (Math.PI / 180)),
       7,
@@ -39,29 +38,27 @@ export function createPlanesWithVideos() {
     ),
     new Euler(0, MathUtils.degToRad(108), 0),
     "content1",
-    // "../shortVideo/glasgow.mp4",
-    new URL("../shortVideo/glasgow.mp4", import.meta.url).toString(),
+    "spiral",
     "Experience"
   );
 
-  createPlaneWithVideo(
+  createPlaneWithGeometricArt(
     20,
     10,
-    "#fff",
-    "#000",
+    "#ffffff",
+    "#000000",
     new Vector3(0, 7, pentagon_radius),
     new Euler(0, MathUtils.degToRad(180), 0),
     "content2",
-    // "../shortVideo/brain.mp4",
-    new URL("../shortVideo/brain.mp4", import.meta.url).toString(),
+    "grid",
     "Education"
   );
 
-  createPlaneWithVideo(
+  createPlaneWithGeometricArt(
     20,
     10,
-    "#fff",
-    "#000",
+    "#ffffff",
+    "#000000",
     new Vector3(
       pentagon_radius * Math.sin(72 * (Math.PI / 180)),
       7,
@@ -69,16 +66,15 @@ export function createPlanesWithVideos() {
     ),
     new Euler(0, MathUtils.degToRad(252), 0),
     "content3",
-    // "../shortVideo/labMeetingVR.mp4",
-    new URL("../shortVideo/labMeetingVR.mp4", import.meta.url).toString(),
+    "voronoi",
     "Publication"
   );
 
-  createPlaneWithVideo(
+  createPlaneWithGeometricArt(
     20,
     10,
-    "#fff",
-    "#000",
+    "#ffffff",
+    "#000000",
     new Vector3(
       pentagon_radius * Math.sin(36 * (Math.PI / 180)),
       7,
@@ -86,8 +82,7 @@ export function createPlanesWithVideos() {
     ),
     new Euler(0, MathUtils.degToRad(324), 0),
     "content4",
-    // "../shortVideo/teamLab.mp4",
-    new URL("../shortVideo/teamLab.mp4", import.meta.url).toString(),
+    "radial",
     "Link"
   );
 }

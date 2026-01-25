@@ -289,7 +289,6 @@ export class GeometricArtGenerator {
     }
 
     // 各ピクセルを最も近い点の色で塗る（簡易的なボロノイ）
-    const imageData = ctx.createImageData(width, height);
     const step = 4; // パフォーマンスのためにピクセルをスキップ
 
     for (let x = 0; x < width; x += step) {

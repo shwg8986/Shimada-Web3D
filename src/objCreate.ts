@@ -1,6 +1,5 @@
 import { Vector3, Euler, MathUtils } from "three";
 import {
-  createPlaneWithVideo,
   createPlaneWithGeometricArt,
   createImageSphere,
   createVideoSphere,

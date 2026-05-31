@@ -309,7 +309,12 @@ export function createVideoSphere(
   const sphereGeometry = new SphereGeometry(radius, 32, 32);
   const sphereMaterial = new ShaderMaterial({
     // 最初はポスター静止画を表示。動画データ読み込み後に videoTexture へ差し替える。
-    uniforms: { videoTexture: { value: posterTexture } },
+    uniforms: {
+      videoTexture: { value: posterTexture },
+      // 縁を淡く光らせて球の立体感を出す（夕焼けに合わせた暖色）
+      rimStrength: { value: 0.5 },
+      rimColor: { value: new Vector3(1.0, 0.85, 0.7) },
+    },
     vertexShader: vertexShader_3d,
     fragmentShader: fragmentShader_3d,
     side: BackSide,
@@ -405,7 +410,12 @@ export function createImageSphere(
     imageTexture.format = RGBAFormat;
 
     const sphereMaterial = new ShaderMaterial({
-      uniforms: { videoTexture: { value: imageTexture } },
+      uniforms: {
+        videoTexture: { value: imageTexture },
+        // 縁を淡く光らせて球の立体感を出す（夕焼けに合わせた暖色）
+        rimStrength: { value: 0.5 },
+        rimColor: { value: new Vector3(1.0, 0.85, 0.7) },
+      },
       vertexShader: vertexShader_3d,
       fragmentShader: fragmentShader_3d,
       side: BackSide,

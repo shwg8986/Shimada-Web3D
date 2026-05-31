@@ -13,9 +13,12 @@ const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
 // カメラが球体の中にいるかどうかをチェックする関数
+const _camWorld = new THREE.Vector3();
 export function checkCameraInsideSphere() {
   if (isInsideSphere && insideSpherePosition) {
-    const distance = camera.position.distanceTo(insideSpherePosition);
+    const distance = camera
+      .getWorldPosition(_camWorld)
+      .distanceTo(insideSpherePosition);
     if (distance > 5) {
       isInsideSphere = false;
       insideSpherePosition = null;

@@ -1,4 +1,4 @@
-import { Mesh, Vector3, SphereGeometry } from "three";
+import { Mesh, Vector3, SphereGeometry, Group } from "three";
 import { PointerLockControls } from "three/addons/controls/PointerLockControls.js";
 import {
   moveForward,
@@ -7,8 +7,76 @@ import {
   moveRight,
 } from "./cameraMoveControls.ts";
 import { camera, compassNeedle } from "./setup.ts";
-import { drone1, drone2, tabObjects } from "./objCreateFunc.ts";
+import {
+  drone1,
+  drone2,
+  tabObjects,
+  PROP_SPIN_SPEED,
+} from "./objCreateFunc.ts";
 import { isMobile } from "./utils.ts";
+
+// ===== 動画再生UI（再生ボタン・読み込み中表示）の制御 =====
+// 現在カメラが入っている動画球体。再生ボタンのクリック対象を保持する。
+let activeVideoSphere: Mesh | null = null;
+
+const getPlayButton = () => document.getElementById("play-button");
+const getVideoLoading = () => document.getElementById("video-loading");
+
+function showPlayButton() {
+  const el = getPlayButton();
+  if (el) el.style.display = "flex";
+}
+function hidePlayButton() {
+  const el = getPlayButton();
+  if (el) el.style.display = "none";
+}
+function showVideoLoading() {
+  const el = getVideoLoading();
+  if (el) el.style.display = "flex";
+}
+function hideVideoLoading() {
+  const el = getVideoLoading();
+  if (el) el.style.display = "none";
+}
+
+// 再生ボタンにクリックイベントを配線する（初期化時に1度だけ呼ぶ）
+export function initVideoPlaybackControls() {
+  const playButton = getPlayButton();
+  if (!playButton) return;
+
+  playButton.addEventListener("click", () => {
+    if (!activeVideoSphere) return;
+    const sphere = activeVideoSphere;
+    const video = sphere.userData.video as HTMLVideoElement;
+
+    hidePlayButton();
+    showVideoLoading(); // クリック直後は読み込み中を表示
+
+    // 動画ごとに1度だけ playing / waiting を監視して読み込み中表示を切り替える
+    if (!sphere.userData.uiListenersAttached) {
+      video.addEventListener("playing", () => {
+        if (activeVideoSphere === sphere) hideVideoLoading();
+      });
+      video.addEventListener("waiting", () => {
+        if (activeVideoSphere === sphere) showVideoLoading();
+      });
+      sphere.userData.uiListenersAttached = true;
+    }
+
+    sphere.userData.isPlaying = true;
+    const playPromise = video.play();
+    if (playPromise && typeof playPromise.catch === "function") {
+      playPromise.catch(() => {
+        // 再生開始に失敗したら再生ボタンに戻す
+        if (activeVideoSphere === sphere) {
+          hideVideoLoading();
+          showPlayButton();
+          sphere.userData.isPlaying = false;
+        }
+      });
+    }
+  });
+}
 
 // ドローンの位置を更新する関数
 export function updateDrones(elapsedTime: number) {
@@ -24,7 +92,21 @@ export function updateDrones(elapsedTime: number) {
     drone2.position.y = 90 + 10 * Math.sin(elapsedTime * 0.7);
     drone2.position.z =
       100 * Math.cos(elapsedTime * 0.3) + 10 * Math.sin(elapsedTime * 1.5);
+
+    // プロペラを回転させる
+    spinPropellers(drone1, elapsedTime);
+    spinPropellers(drone2, elapsedTime);
   }
+}
+
+// ドローンに取り付けた疑似プロペラを回転させる
+function spinPropellers(drone: Group, elapsedTime: number) {
+  const propellers = drone.userData.propellers as Group[] | undefined;
+  if (!propellers) return;
+  propellers.forEach((propeller) => {
+    const dir = propeller.userData.spinDir ?? 1;
+    propeller.rotation.y = elapsedTime * PROP_SPIN_SPEED * dir;
+  });
 }
 
 // コンパスの向きを更新する関数
@@ -132,18 +214,29 @@ function handleVideoSphereInsideStateChange(sphere: Mesh, isInside: boolean) {
     backButton.style.display = "block"; // ボタンを表示
     backButton.style.visibility = "visible"; // ボタンを表示
     tabs.style.display = "none"; // タブを非表示
-    if (!sphere.userData.isPlaying) {
-      sphere.userData.video.play(); // 動画を再生
-      sphere.userData.isPlaying = true;
+
+    activeVideoSphere = sphere;
+    // 自動再生はせず、再生ボタンを表示してユーザーのクリックを待つ
+    if (sphere.userData.isPlaying) {
+      hideVideoLoading();
+      hidePlayButton();
+    } else {
+      hideVideoLoading();
+      showPlayButton();
     }
   } else {
     backButton.style.display = "none"; // ボタンを非表示
     backButton.style.visibility = "hidden"; // ボタンを非表示
     tabs.style.display = "block"; // タブを表示
+
+    // 球体から出たら再生UIを隠して動画を停止
+    hidePlayButton();
+    hideVideoLoading();
     if (sphere.userData.isPlaying) {
       sphere.userData.video.pause(); // 動画を停止
       sphere.userData.isPlaying = false;
     }
+    if (activeVideoSphere === sphere) activeVideoSphere = null;
   }
 }
 

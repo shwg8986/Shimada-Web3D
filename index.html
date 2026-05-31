@@ -520,6 +520,19 @@
       </div>
       <div id="joystickContainer"></div>
       <button id="back-button">back</button>
+
+      <!-- 動画の再生ボタン（球体に入ると表示） -->
+      <button id="play-button" aria-label="再生">
+        <svg viewBox="0 0 24 24" width="42" height="42" fill="currentColor">
+          <path d="M8 5v14l11-7z" />
+        </svg>
+      </button>
+
+      <!-- 動画の読み込み中表示 -->
+      <div id="video-loading">
+        <div class="video-spinner"></div>
+        <span>読み込み中...</span>
+      </div>
     </div>
 
     <script type="module" src="/src/main.ts"></script>

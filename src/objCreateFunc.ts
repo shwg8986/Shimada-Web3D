@@ -16,6 +16,7 @@ import {
   TextureLoader,
   BoxGeometry,
   MeshStandardMaterial,
+  Box3,
 } from "three";
 import { TextGeometry } from "three/addons/geometries/TextGeometry.js";
 import { vertexShader_2d, fragmentShader_2d } from "../shaders/shader_2d.ts";
@@ -46,7 +47,7 @@ export function createPlaneWithVideo(
   rotation: Euler,
   contentId: string,
   videoSrc: string,
-  title: string
+  title: string,
 ) {
   const video = document.createElement("video");
   video.src = videoSrc;
@@ -128,16 +129,20 @@ export function createPlaneWithGeometricArt(
   rotation: Euler,
   contentId: string,
   artType: ArtType,
-  title: string
+  title: string,
 ) {
   // モバイルかどうかで解像度とパフォーマンスモードを切り替え
   const mobile = isMobile();
   const canvasWidth = mobile ? 512 : 1024;
   const canvasHeight = mobile ? 256 : 512;
-  const perfMode = mobile ? 'low' : 'high';
+  const perfMode = mobile ? "low" : "high";
 
   // 幾何学アート生成
-  const artGenerator = new GeometricArtGenerator(canvasWidth, canvasHeight, perfMode);
+  const artGenerator = new GeometricArtGenerator(
+    canvasWidth,
+    canvasHeight,
+    perfMode,
+  );
   artGenerator.draw(artType);
   artGenerators.push(artGenerator);
 
@@ -271,8 +276,9 @@ export function createVideoSphere(
   position: Vector3,
   rotation: Euler,
   videoSrc: string,
+  posterSrc: string,
   title: string,
-  font: Font
+  font: Font,
 ) {
   const video = document.createElement("video");
   video.src = videoSrc;
@@ -280,81 +286,39 @@ export function createVideoSphere(
   video.muted = true;
   video.crossOrigin = "anonymous";
   video.setAttribute("playsinline", "");
-  video.setAttribute("preload", "true");
-  video.setAttribute("autoplay", "true");
-  video.pause();
+  // 遅延ロード: 起動時には動画をダウンロードしない。
+  // preload="none" かつ autoplay を付けないことで、球体に近づいて
+  // play() が呼ばれた時に初めて動画の読み込みが始まる。
+  // （以前は preload="auto" 相当 + autoplay で、PCでは起動と同時に
+  //   3本の動画 計約150MB を一括ダウンロードしていたのがボトルネックだった）
+  video.setAttribute("preload", "none");
 
   const videoTexture = new VideoTexture(video);
   videoTexture.minFilter = LinearFilter;
   videoTexture.magFilter = LinearFilter;
   videoTexture.format = RGBAFormat;
 
-  // ローディング用のテクスチャを作成
-  const loadingCanvas = document.createElement("canvas");
-  const loadingContext = loadingCanvas.getContext("2d")!;
-  const scale = 2; // 解像度の倍率
-  loadingCanvas.width = 512 * scale;
-  loadingCanvas.height = 512 * scale;
-  loadingContext.fillStyle = "black";
-  const gradient = loadingContext.createLinearGradient(
-    0,
-    0,
-    loadingCanvas.width,
-    loadingCanvas.height
-  );
-  gradient.addColorStop(0, "black"); // 左上は黒
-  gradient.addColorStop(1, "gray"); // 右下は灰色
-
-  // 背景を描画
-  loadingContext.fillStyle = gradient;
-  loadingContext.fillRect(0, 0, loadingCanvas.width, loadingCanvas.height);
-
-  // テキスト
-  const textWidth = 400 * scale; // テキストエリアの幅
-  const textHeight = 50 * scale; // テキストエリアの高
-  const textX = (loadingCanvas.width - textWidth) / 2; // 中央に配置
-  const textY = (loadingCanvas.height - textHeight) / 2; // 中央に配置
-  loadingContext.clearRect(textX, textY, textWidth, textHeight); // テキストエリアをクリア
-
-  loadingContext.fillStyle = "black";
-  loadingContext.font = "48px bold sans-serif";
-  loadingContext.textAlign = "center";
-  loadingContext.textBaseline = "middle";
-  loadingContext.fillText("Now Loading...", 256 * scale, 256 * scale);
-
-  const loadingTexture = new CanvasTexture(loadingCanvas);
-  const loadingMaterial = new MeshBasicMaterial({
-    map: loadingTexture,
-    transparent: true,
-    opacity: 0.7,
-  });
-  const loadingGeometry = new SphereGeometry(radius, 32, 32);
-  const loadingSphere = new Mesh(loadingGeometry, loadingMaterial);
-  loadingSphere.position.copy(position);
-  loadingSphere.rotation.set(rotation.x, rotation.y - 1.5, rotation.z);
-  scene.add(loadingSphere);
-
-  // 動画の最初のフレームがロードされたら再生を開始する
-  video.addEventListener("loadeddata", () => {
-    videoTexture.needsUpdate = true; // 動画テクスチャが完全にロードされたことをThree.jsに通知
-    scene.remove(loadingSphere); // ローディング表示を削除
-  });
-
-  // Loadingのテスト
-  // video.addEventListener("loadeddata", () => {
-  //   // 一定時間（例：3秒）経過後にローディング表示を削除
-  //   setTimeout(() => {
-  //     videoTexture.needsUpdate = true;
-  //     scene.remove(loadingSphere); // ローディング表示を削除
-  //   }, 10000); // 10秒間表示
-  // });
+  // ポスター（静止画）テクスチャ:
+  // 動画は遅延ロードのため近づくまで読み込まれないが、その間も球体が
+  // 白く（テクスチャ無しに）ならないよう、軽量な静止画を最初から貼っておく。
+  const posterTexture = new TextureLoader().load(posterSrc);
+  posterTexture.minFilter = LinearFilter;
+  posterTexture.magFilter = LinearFilter;
+  posterTexture.format = RGBAFormat;
 
   const sphereGeometry = new SphereGeometry(radius, 32, 32);
   const sphereMaterial = new ShaderMaterial({
-    uniforms: { videoTexture: { value: videoTexture } },
+    // 最初はポスター静止画を表示。動画データ読み込み後に videoTexture へ差し替える。
+    uniforms: { videoTexture: { value: posterTexture } },
     vertexShader: vertexShader_3d,
     fragmentShader: fragmentShader_3d,
     side: BackSide,
+  });
+
+  // 動画データが読み込めたら、テクスチャをポスターから動画へ切り替える
+  video.addEventListener("loadeddata", () => {
+    videoTexture.needsUpdate = true;
+    sphereMaterial.uniforms.videoTexture.value = videoTexture;
   });
 
   const videoSphere = new Mesh(sphereGeometry, sphereMaterial);
@@ -386,7 +350,7 @@ export function createImageSphere(
   rotation: Euler,
   imageSrc: string,
   title: string,
-  font: Font
+  font: Font,
 ) {
   // ローディング用のテクスチャ
   const loadingCanvas = document.createElement("canvas");
@@ -399,7 +363,7 @@ export function createImageSphere(
     0,
     0,
     loadingCanvas.width,
-    loadingCanvas.height
+    loadingCanvas.height,
   );
   gradient.addColorStop(0, "black"); // 左上は黒
   gradient.addColorStop(1, "gray"); // 右下は灰色
@@ -477,7 +441,7 @@ export function createTextMeshes(
   text: string,
   font: Font,
   size: number,
-  color: number
+  color: number,
 ): Mesh[] {
   const letters = text.split("");
   const textMeshes = letters.map((letter) => {
@@ -509,7 +473,7 @@ export function createMetalBox(
   radius: number,
   width: number,
   height: number,
-  depth: number
+  depth: number,
 ) {
   const boxGeometry = new BoxGeometry(width, height, depth);
   const textureLoader = new TextureLoader();
@@ -519,7 +483,7 @@ export function createMetalBox(
     metalness: 0.7,
     // metalnessMap: textureLoader.load("../textures/stone.jpg"),
     metalnessMap: textureLoader.load(
-      new URL("../textures/stone.jpg", import.meta.url).toString()
+      new URL("../textures/stone.jpg", import.meta.url).toString(),
     ),
     emissive: 0x333333,
     emissiveIntensity: 0.4,
@@ -529,7 +493,7 @@ export function createMetalBox(
   metalBox.position.set(
     spherePosition.x,
     spherePosition.y - (radius + height / 2 + 0.1),
-    spherePosition.z
+    spherePosition.z,
   );
   metalBox.rotation.copy(sphereRotation);
   scene.add(metalBox);
@@ -537,6 +501,75 @@ export function createMetalBox(
 }
 
 // ドローンの読み込み
+// モデル(drone_costum.fbx)は本体もプロペラも1メッシュに統合されており、
+// プロペラだけを分離して回せない。そこで疑似プロペラを4基追加して回す。
+// 配置・サイズはモデルのバウンディングボックス（スケール前のローカル空間）
+// に対する比率で指定するので、モデルのスケールが変わっても自動で追従する。
+const PROP_SPAN_X = 0.34; // 中心からのX方向オフセット（bboxサイズ比）
+const PROP_SPAN_Z = 0.34; // 中心からのZ方向オフセット（bboxサイズ比）
+const PROP_Y_OFFSET = -0.4; // 上端からの高さ（bboxサイズ比）
+const PROP_BLADE_LEN = 0.3; // 羽根の全長（bboxのX幅に対する比）
+const PROP_SPIN_SPEED = 25; // 回転速度（ラジアン/秒）
+
+// 1基のプロペラ（十字に組んだ2枚羽根）を生成
+function createPropeller(bladeLength: number): Group {
+  const propeller = new Group();
+  const width = bladeLength * 0.18;
+  const thickness = bladeLength * 0.05;
+  const material = new MeshStandardMaterial({
+    color: 0x1a1a1a,
+    metalness: 0.4,
+    roughness: 0.6,
+    transparent: true,
+    opacity: 0.85,
+    side: DoubleSide,
+  });
+  for (let i = 0; i < 2; i++) {
+    const blade = new Mesh(
+      new BoxGeometry(bladeLength, thickness, width),
+      material,
+    );
+    blade.rotation.y = (i * Math.PI) / 2; // 90°ずらして十字に
+    propeller.add(blade);
+  }
+  return propeller;
+}
+
+// ドローンに疑似プロペラを4基取り付ける
+function attachPropellers(drone: Group) {
+  // スケールを一旦戻してジオメトリ空間(=子の座標系)のbboxを測る
+  const prevScale = drone.scale.clone();
+  drone.scale.set(1, 1, 1);
+  drone.updateMatrixWorld(true);
+  const box = new Box3().setFromObject(drone);
+  drone.scale.copy(prevScale);
+
+  const size = box.getSize(new Vector3());
+  const center = box.getCenter(new Vector3());
+  const bladeLength = size.x * PROP_BLADE_LEN;
+  const x = size.x * PROP_SPAN_X;
+  const z = size.z * PROP_SPAN_Z;
+  const y = box.max.y + size.y * PROP_Y_OFFSET;
+
+  const corners = [
+    new Vector3(center.x - x, y, center.z - z),
+    new Vector3(center.x + x, y, center.z - z),
+    new Vector3(center.x - x, y, center.z + z),
+    new Vector3(center.x + x, y, center.z + z),
+  ];
+
+  const propellers: Group[] = [];
+  corners.forEach((pos, i) => {
+    const propeller = createPropeller(bladeLength);
+    propeller.position.copy(pos);
+    // 隣り合うプロペラは逆回転（クアッドコプター風）
+    propeller.userData.spinDir = i % 2 === 0 ? 1 : -1;
+    drone.add(propeller);
+    propellers.push(propeller);
+  });
+  drone.userData.propellers = propellers;
+}
+
 export function loadDrones() {
   const fbxLoader = new FBXLoader();
   // fbxLoader.setResourcePath("../models/Drone_Costum/Teturizer/");
@@ -549,27 +582,30 @@ export function loadDrones() {
   fbxLoader.setResourcePath(
     new URL(
       "/models/Drone_Costum/Teturizer/Blury.jpg",
-      import.meta.url
-    ).toString()
+      import.meta.url,
+    ).toString(),
   );
   fbxLoader.setResourcePath(
     new URL(
       "/models/Drone_Costum/Teturizer/Aperture-icon.png",
-      import.meta.url
-    ).toString()
+      import.meta.url,
+    ).toString(),
   );
   fbxLoader.load(
     new URL(
       "/models/Drone_Costum/Material/drone_costum.fbx",
-      import.meta.url
+      import.meta.url,
     ).toString(),
     (obj) => {
       obj.scale.set(0.015, 0.015, 0.015);
       drone1 = obj;
       drone2 = obj.clone();
+      // それぞれに疑似プロペラを取り付ける
+      attachPropellers(drone1);
+      attachPropellers(drone2);
       scene.add(drone1);
       scene.add(drone2);
-    }
+    },
   );
 }
 
@@ -582,4 +618,5 @@ export {
   drone1,
   drone2,
   artGenerators,
+  PROP_SPIN_SPEED,
 };

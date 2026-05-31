@@ -95,6 +95,10 @@ export function createVideoSpheres_PC() {
     new Euler(0, 0, 0),
     // "../shortVideo/tourEiffel3d_st.MP4",
     new URL("../shortVideo/tourEiffel3d_st.MP4", import.meta.url).toString(),
+    new URL(
+      "../shortVideo/posters/tourEiffel3d_st.jpg",
+      import.meta.url
+    ).toString(),
     "Paris Video",
     font
   );
@@ -108,6 +112,10 @@ export function createVideoSpheres_PC() {
     new Euler(0, MathUtils.degToRad(288), 0),
     // "../shortVideo/cruiseThai3d.MP4",
     new URL("../shortVideo/cruiseThai3d.mp4", import.meta.url).toString(),
+    new URL(
+      "../shortVideo/posters/cruiseThai3d.jpg",
+      import.meta.url
+    ).toString(),
     "Bangkok Video",
     font
   );
@@ -121,6 +129,10 @@ export function createVideoSpheres_PC() {
     new Euler(0, MathUtils.degToRad(72), 0),
     // "../shortVideo/warsawOld23d_st.MP4",
     new URL("../shortVideo/warsawOld23d_st.MP4", import.meta.url).toString(),
+    new URL(
+      "../shortVideo/posters/warsawOld23d_st.jpg",
+      import.meta.url
+    ).toString(),
     "Warsaw Video",
     font
   );

@@ -203,6 +203,67 @@ body {
   margin-right: 8px; /* テキストとの間隔を調整 */
 }
 
+/* 動画の再生ボタン（球体に入ると画面中央に表示） */
+#play-button {
+  display: none; /* 初期状態は非表示 */
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90px;
+  height: 90px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  cursor: pointer;
+  z-index: 25;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: background 0.2s, transform 0.2s;
+}
+#play-button:hover {
+  background: rgba(0, 0, 0, 0.75);
+  transform: translate(-50%, -50%) scale(1.08);
+}
+#play-button:active {
+  transform: translate(-50%, -50%) scale(0.96);
+}
+#play-button svg {
+  margin-left: 4px; /* 三角形を視覚的に中央へ */
+}
+
+/* 動画の読み込み中表示 */
+#video-loading {
+  display: none; /* 初期状態は非表示 */
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  color: #fff;
+  font-size: 16px;
+  z-index: 25;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+  pointer-events: none; /* 操作を妨げない */
+}
+.video-spinner {
+  width: 48px;
+  height: 48px;
+  border: 5px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: video-spin 0.9s linear infinite;
+}
+@keyframes video-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .accordion {
   border-radius: 4px;
   margin: 12px 0;

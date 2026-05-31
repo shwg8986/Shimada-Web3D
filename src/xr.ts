@@ -12,6 +12,7 @@ import { VRButton } from "three/addons/webxr/VRButton.js";
 import { scene, camera, renderer } from "./setup.ts";
 import { videoSpheres, imageSpheres } from "./objCreateFunc.ts";
 import { spawnBurst } from "./particles.ts";
+import { isMobile } from "./utils.ts";
 
 let dolly: THREE.Group;
 let controller0: THREE.XRTargetRaySpace;
@@ -107,13 +108,13 @@ function onSessionEnd() {
   }
 }
 
-// VRButton の「VR NOT SUPPORTED」を、デバイス非対応だと分かる文言へ置き換える。
-// （VR自体が存在しない、と誤解されないように）
-function patchVRButtonText(button: HTMLElement) {
+// VRButton の「VR NOT SUPPORTED」だけを、デバイス非対応だと分かる文言へ置き換える。
+// （"WEBXR NEEDS HTTPS" 等は意味のある案内なのでそのまま残す。位置は three の
+//   デフォルト＝下部中央のまま）
+function patchVRButton(button: HTMLElement) {
   const TARGET = "VR not supported on your device";
   const fix = () => {
-    const txt = button.textContent || "";
-    if (/VR NOT SUPPORTED/i.test(txt) && txt !== TARGET) {
+    if (button.textContent === "VR NOT SUPPORTED") {
       button.textContent = TARGET;
     }
   };
@@ -127,9 +128,12 @@ function patchVRButtonText(button: HTMLElement) {
 }
 
 export function initXR() {
-  const vrButton = VRButton.createButton(renderer);
-  patchVRButtonText(vrButton);
-  document.body.appendChild(vrButton);
+  // スマホでは VR が使えず、非対応ボタンが他UIと重なるだけなので表示しない
+  if (!isMobile()) {
+    const vrButton = VRButton.createButton(renderer);
+    patchVRButton(vrButton);
+    document.body.appendChild(vrButton);
+  }
 
   dolly = new THREE.Group();
   dolly.name = "player-dolly";

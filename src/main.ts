@@ -63,6 +63,13 @@ import { setupEventListeners, initializeAccordions } from "./eventListeners.ts";
 
 import { checkCameraInsideSphere, isMobile } from "./utils.ts";
 
+// 追加演出系モジュール
+import { initTimeOfDay } from "./timeOfDay.ts";
+import { initParticles, updateParticles } from "./particles.ts";
+import { initWaterRipples, updateWaterRipples } from "./waterRipples.ts";
+import { initClickMarkers, updateClickMarkers } from "./clickMarkers.ts";
+import { initXR, updateXR } from "./xr.ts";
+
 // グローバル変数の定義
 let font: Font;
 let isCameraMoving = false;
@@ -173,13 +180,23 @@ function setupInitialObjects() {
   }
   loadDrones(); // ドローンの読み込み
   setupLights(); // ライトの設定
+
+  // 追加演出の初期化（setup 完了後・オブジェクト生成後に行う）
+  initTimeOfDay(); // 時間帯変化（昼→夕→夜・星空・星座）
+  initParticles(); // ドローンの軌跡・弾ける粒子
+  initWaterRipples(); // カーソルに反応する水面の波紋
+  initClickMarkers(); // クリック可能を示す▽マーカー
+  initXR(); // WebXR（VR）対応
 }
 
 // アニメーションの処理
 
 function animate() {
   const clock = new THREE.Clock();
-  function render() {
+  // WebXR ではブラウザの XR フレームループを使う必要があるため、
+  // requestAnimationFrame ではなく renderer.setAnimationLoop を用いる。
+  // （非XR時も内部的に rAF で動作する）
+  renderer.setAnimationLoop(() => {
     const deltaTime = clock.getDelta();
     const elapsedTime = clock.getElapsedTime();
     const amplitude = 1.5;
@@ -208,8 +225,16 @@ function animate() {
     // 幾何学アートの更新
     updateGeometricArt(deltaTime);
 
-    // カメラの移動処理
-    if (controls) {
+    // パーティクル・水面の波紋・クリックマーカーの更新
+    updateParticles(deltaTime);
+    updateWaterRipples(deltaTime);
+    updateClickMarkers(elapsedTime);
+
+    // VR 移動（プレゼンテーション中のみ動作）
+    updateXR(deltaTime);
+
+    // カメラの移動処理（VR中は Dolly 側で移動するのでスキップ）
+    if (controls && !renderer.xr.isPresenting) {
       updateCameraControls(controls);
     }
 
@@ -217,14 +242,12 @@ function animate() {
     updateCompass();
 
     renderer.render(scene, camera);
-    requestAnimationFrame(render);
 
     water.material.uniforms["time"].value += 1.0 / 60.0;
 
     // カメラが球体内にいるかどうかのチェック
     checkCameraInsideSphere();
-  }
-  render();
+  });
 }
 
 // 初期化関数の呼び出し

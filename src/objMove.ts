@@ -15,6 +15,9 @@ import {
 } from "./objCreateFunc.ts";
 import { isMobile } from "./utils.ts";
 
+// ワールド座標計算用の使い回しベクトル
+const _tmpCamWorld = new Vector3();
+
 // ===== 動画再生UI（再生ボタン・読み込み中表示）の制御 =====
 // 現在カメラが入っている動画球体。再生ボタンのクリック対象を保持する。
 let activeVideoSphere: Mesh | null = null;
@@ -152,11 +155,15 @@ function updateSpheres(
 
   const yOffset = amplitude * Math.sin(frequency * elapsedTime);
 
+  // VR中はカメラが Dolly の子になるため、ローカルではなくワールド座標で判定する。
+  // （デスクトップではカメラの親がシーンなのでワールド=ローカルで挙動は不変）
+  const camWorld = camera.getWorldPosition(_tmpCamWorld);
+
   spheres.forEach((sphere, index) => {
     const initialPosition = initialPositions[index];
 
     // カメラが球体の中にいるかどうかをチェック
-    const distanceToCamera = camera.position.distanceTo(sphere.position);
+    const distanceToCamera = camWorld.distanceTo(sphere.position);
     const isInsideSphere = distanceToCamera < sphere.userData.radius;
 
     // 初回チェック用にpreviousStatesを初期化

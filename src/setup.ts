@@ -43,6 +43,8 @@ export function setupRenderer() {
   renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
   renderer.setSize(sizes.width, sizes.height);
   renderer.setPixelRatio(window.devicePixelRatio);
+  // WebXR（VR）を有効化。VRButton と src/xr.ts のコントローラ処理で使用する。
+  renderer.xr.enabled = true;
 }
 
 // カメラ制御の設定

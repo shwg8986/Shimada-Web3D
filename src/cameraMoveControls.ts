@@ -171,13 +171,20 @@ export function moveCameraInsideSphere(
 
   const adjustedPosition = spherePosition.clone();
 
+  // パノラマ正面の補正:
+  // SphereGeometry の UV では等角画像の中央(U=0.5)がローカル +X 方向に
+  // マッピングされる一方、カメラの前方は -Z 方向。両者は90°ずれているため、
+  // そのまま sphereRotation.y を使うと入った瞬間に正面ではなく真横を向く。
+  // -π/2 補正することでカメラがパノラマ正面を向くようにする。
+  const targetRotationY = sphereRotation.y - Math.PI / 2;
+
   function animateCamera(time: number) {
     const elapsedTime = time - startTime;
     const t = Math.min(elapsedTime / duration, 1);
     camera.position.lerpVectors(startPosition, adjustedPosition, t);
     camera.rotation.set(
       MathUtils.lerp(startRotation.x, sphereRotation.x, t),
-      MathUtils.lerp(startRotation.y, sphereRotation.y, t),
+      MathUtils.lerp(startRotation.y, targetRotationY, t),
       MathUtils.lerp(startRotation.z, sphereRotation.z, t)
     );
     if (t < 1) {

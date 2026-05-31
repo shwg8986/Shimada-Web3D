@@ -2,7 +2,14 @@
   "permissions": {
     "allow": [
       "Bash(npx tsc:*)",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(xargs du -h)",
+      "Bash(ffmpeg -version)",
+      "Bash(echo \"exit: $?\")",
+      "Bash(grep -v \"//\")",
+      "PowerShell(npx tsc --noEmit)",
+      "PowerShell(if \\($?\\) { \"TYPECHECK OK\" } else { \"TYPECHECK FAILED\" })",
+      "Bash(xargs grep -ln \"fragmentShader_3d\")"
     ]
   }
 }

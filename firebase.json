@@ -5,6 +5,48 @@
       "firebase.json",
       "**/.*",
       "**/node_modules/**"
+    ],
+    "headers": [
+      {
+        "source": "**/*.@(js|css|woff|woff2|ttf|otf|json)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=31536000, immutable"
+          }
+        ]
+      },
+      {
+        "source": "**/*.@(jpg|JPG|jpeg|png|webp|avif|gif|svg)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=2592000, immutable"
+          }
+        ]
+      },
+      {
+        "source": "**/*.@(mp4|MP4|webm|mov|MOV|m4v)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=2592000"
+          },
+          {
+            "key": "Accept-Ranges",
+            "value": "bytes"
+          }
+        ]
+      },
+      {
+        "source": "**/*.@(fbx|obj|mtl|gltf|glb)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=2592000, immutable"
+          }
+        ]
+      }
     ]
   }
 }

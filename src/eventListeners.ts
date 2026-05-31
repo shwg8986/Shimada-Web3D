@@ -11,6 +11,7 @@ import {
   moveCameraTo,
 } from "./cameraMoveControls.ts";
 import { videoSpheres, imageSpheres, tabObjects } from "./objCreateFunc.ts";
+import { initVideoPlaybackControls } from "./objMove.ts";
 
 const sizes = { width: window.innerWidth, height: window.innerHeight };
 const initialCameraPosition = new THREE.Vector3(0, 10, 0);
@@ -212,6 +213,9 @@ export function setupEventListeners() {
   window.addEventListener("mousemove", onMouseHover);
 
   setupJoystick();
+
+  // 動画の再生ボタンを配線
+  initVideoPlaybackControls();
 }
 
 // アコーディオンの初期化

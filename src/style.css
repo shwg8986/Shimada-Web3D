@@ -531,14 +531,15 @@ p {
 
 .label {
   display: inline-block;
-  padding: 1px 6px;
+  padding: 2px 6px;
   border-radius: 4px;
   font-size: 0.7em;
+  line-height: 1;
   color: #fff;
 }
 
 .review-none {
-  background-color: #999; /* 赤色 */
+  background-color: #999;
 }
 
 .review-yes {
@@ -551,9 +552,10 @@ p {
 
 .extrainfo {
   display: inline-block;
-  padding: 3px 6px;
+  padding: 2px 6px;
   border-radius: 4px;
   font-size: 0.7em;
+  line-height: 1;
   color: #fff;
   background: linear-gradient(
     45deg,
@@ -563,4 +565,12 @@ p {
     #b67b03 90% 100%
   );
   margin-left: 4px;
+}
+
+.topic-quantum {
+  background-color: #0284c7;
+}
+
+.topic-vr {
+  background-color: #7c3aed;
 }

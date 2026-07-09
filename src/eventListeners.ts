@@ -12,6 +12,7 @@ import {
 } from "./cameraMoveControls.ts";
 import { videoSpheres, imageSpheres, tabObjects } from "./objCreateFunc.ts";
 import { initVideoPlaybackControls } from "./objMove.ts";
+import { cancelIntroAnimation } from "./loadingAnimation.ts";
 
 const sizes = { width: window.innerWidth, height: window.innerHeight };
 const initialCameraPosition = new THREE.Vector3(0, 10, 0);
@@ -37,6 +38,7 @@ function onMouseMove(event: MouseEvent) {
 
 // マウスダウン時のイベントハンドラ
 function onMouseDown(event: MouseEvent) {
+  cancelIntroAnimation(); // イントロ中でも操作を即座に受け付ける
   isDragging = false;
   previousMousePosition = { x: event.clientX, y: event.clientY };
   clickTimeout = window.setTimeout(() => {
@@ -75,6 +77,7 @@ function onTouchMove(event: TouchEvent) {
 
 // タッチスタート時のイベントハンドラ
 function onTouchStart(event: TouchEvent) {
+  cancelIntroAnimation(); // イントロ中でも操作を即座に受け付ける
   if (event.touches.length === 1) {
     isDragging = false;
     previousMousePosition = {
@@ -139,15 +142,19 @@ export function setupEventListeners() {
   document.addEventListener("DOMContentLoaded", () => {
     const headerElement = document.querySelector(".header");
     if (isMobile()) {
-      headerElement.textContent = "しまだのWeb3D - スマホ版";
       headerElement.classList.add("mobile-header");
-    } else {
-      headerElement.textContent = "しまだのWeb3D - PC版";
     }
   });
 
   // コンパスの初期化
   window.addEventListener("load", setUpCompass);
+
+  // どこかをポインタ操作したらイントロ演出を即中断する
+  // （canvas外のUI: タブ・ヘッダー・backボタン等のクリックも対象）
+  document.addEventListener("pointerdown", () => cancelIntroAnimation(), {
+    passive: true,
+    capture: true,
+  });
 
   // マウスイベント
   canvas.addEventListener("mousedown", onMouseDown, { passive: true });
@@ -162,6 +169,9 @@ export function setupEventListeners() {
   canvas.addEventListener("touchcancel", onTouchEnd, { passive: true });
 
   // キーボードイベント
+  document.addEventListener("keydown", () => cancelIntroAnimation(), {
+    passive: true,
+  });
   document.addEventListener("keydown", onKeyDown, { passive: true });
   document.addEventListener("keyup", onKeyUp, { passive: true });
 

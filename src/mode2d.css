@@ -1,0 +1,537 @@
+/* ============================================================
+   2D表示モード（#app2d）と 2D/3D 切り替えトグルのスタイル
+
+   デザインは3Dサイトの世界観に合わせる:
+     - 背景: 3Dシーンの空〜水面を思わせる淡いグラデーション
+     - パネル: 3Dオーバーレイと同じ半透明の白カード（rgba(255,255,255,0.8)）
+     - 見出し: Patrick Hand（3Dのヘッダーと同じ手書き風フォント）
+     - ボタン: #back-button と同じオレンジのグラデーション
+   ============================================================ */
+
+/* ===== 2D/3D 切り替えトグル（3Dのback-buttonと同じ意匠） ===== */
+#view-toggle {
+  position: fixed;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%); /* 3Dモードでは画面上部中央（他のUIと重ならない位置） */
+  z-index: 2000;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #ff7e5f, #feb47b);
+  color: #fff;
+  border: none;
+  border-radius: 25px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+  transition: background 0.3s, transform 0.3s;
+}
+
+#view-toggle:hover {
+  background: linear-gradient(135deg, #feb47b, #ff7e5f);
+  transform: translate(-50%, -2px);
+}
+
+#view-toggle:active {
+  transform: translate(-50%, 1px);
+}
+
+/* 3DオーバーレイでProfile等を表示している間はトグルを隠す（閲覧の邪魔をしない） */
+body.overlay-open #view-toggle {
+  display: none;
+}
+
+/* 2Dモード中はアプリバー右端に移動 */
+body.mode-2d #view-toggle {
+  top: 16px;
+  left: auto;
+  right: 16px;
+  transform: none;
+}
+
+body.mode-2d #view-toggle:hover {
+  transform: translateY(-2px);
+}
+
+body.mode-2d #view-toggle:active {
+  transform: translateY(1px);
+}
+
+/* ===== モード切り替えの表示制御 ===== */
+body.mode-2d #app {
+  display: none;
+}
+
+/* three.js の VRButton（body直下に追加される）は2D表示中は隠す */
+body.mode-2d #VRButton {
+  display: none !important;
+}
+
+#app2d {
+  display: none;
+}
+
+body.mode-2d #app2d {
+  display: block;
+  position: fixed;
+  inset: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  z-index: 500;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #333;
+  /* 3Dシーンの空→水平線→水面をイメージしたグラデーション */
+  background: linear-gradient(
+    180deg,
+    #cfe9f7 0%,
+    #eaf6fc 30%,
+    #f6f4ec 48%,
+    #cfe4f0 62%,
+    #a9cde3 100%
+  );
+  background-attachment: fixed;
+}
+
+/* ===== 2D⇔3D 遷移オーバーレイ（ワープ演出用のホワイトアウト） ===== */
+#mode-transition {
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at 50% 45%,
+    rgba(255, 255, 255, 0.98) 0%,
+    rgba(225, 242, 250, 0.97) 55%,
+    rgba(170, 212, 235, 0.98) 100%
+  );
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: opacity 0.6s ease, visibility 0.6s;
+}
+
+#mode-transition.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: all;
+  transition: opacity 0.35s ease, visibility 0.35s;
+}
+
+/* ===== アプリバー（3Dのヘッダーと同じ雰囲気） ===== */
+.s2d-appbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  height: 76px;
+  padding: 0 28px;
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.06);
+}
+
+.s2d-brand {
+  font-family: "Patrick Hand", cursive;
+  font-size: 2em;
+  font-weight: bold;
+  color: #333;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+/* ===== セクション共通: 3Dオーバーレイと同じ半透明白カード ===== */
+.s2d-section,
+.s2d-hero {
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  max-width: 900px;
+  margin: 32px auto;
+  padding: 36px 44px 44px;
+}
+
+.s2d-title {
+  color: #333;
+  font-family: "Patrick Hand", cursive;
+  font-size: 36px;
+  margin: 0;
+}
+
+.s2d-subtitle {
+  color: #777;
+  font-size: 15px;
+  margin: 2px 0 30px 10px;
+}
+
+/* ===== ヒーロー（Profile） ===== */
+.s2d-hero {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 48px;
+  margin-top: 44px;
+}
+
+.s2d-hero-image {
+  max-width: 300px;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 24px rgba(64, 151, 226, 0.45);
+}
+
+.s2d-hero-text h1 {
+  color: #333;
+  font-family: "Patrick Hand", cursive;
+  font-size: 40px;
+  margin: 0;
+}
+
+.s2d-hero-sub {
+  color: #777;
+  font-size: 16px;
+  margin: 4px 0 0;
+}
+
+.s2d-hero-name {
+  color: #222;
+  font-size: 32px;
+  font-family: "Times New Roman", serif;
+  margin: 32px 0 0;
+}
+
+.s2d-hero-desc {
+  color: #333;
+  font-size: 18px;
+  line-height: 1.9;
+  margin: 24px 0 0;
+}
+
+/* ===== About Me ===== */
+.s2d-about-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.s2d-about-item i {
+  margin-top: 6px;
+  font-size: 19px;
+  width: 24px;
+  text-align: center;
+}
+
+/* アイコン色は3Dサイトのラベル・ボタンの配色から */
+.s2d-about-item .s2d-icon-science {
+  color: #7c3aed; /* .topic-vr の紫 */
+}
+
+.s2d-about-item .s2d-icon-code {
+  color: #4097e2; /* .review-yes の青 */
+}
+
+.s2d-about-item .s2d-icon-explore {
+  color: #ff7e5f; /* #back-button のオレンジ */
+}
+
+.s2d-about-item p {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.9;
+}
+
+.s2d-note {
+  font-family: "Patrick Hand", cursive;
+  color: #555;
+  font-size: 17px;
+  margin: 26px 0 34px;
+}
+
+.s2d-hobbies-title {
+  font-family: "Patrick Hand", cursive;
+  font-size: 20px;
+  font-weight: bold;
+  color: #444;
+  margin: 0 0 14px;
+}
+
+.s2d-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.s2d-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #ccc;
+  border-radius: 16px;
+  padding: 7px 15px;
+  font-size: 15px;
+  color: #333;
+  background: rgba(255, 255, 255, 0.75);
+}
+
+.s2d-chip i {
+  color: #4097e2;
+}
+
+/* ===== テーブル共通（3Dオーバーレイ内のテーブルと同じ見た目） ===== */
+#app2d .table {
+  width: 100%;
+}
+
+#app2d .table tr:nth-child(odd) {
+  background-color: #f9f9f9;
+}
+
+#app2d .table tr:nth-child(even) {
+  background-color: #ffffff;
+}
+
+#app2d .table tr:hover {
+  background-color: #f1f1f1;
+}
+
+#app2d .table td {
+  padding: 12px;
+  border: 1px solid #ddd;
+  text-align: left;
+  font-size: 16px;
+  border-radius: 4px;
+}
+
+#app2d .table td:first-child {
+  width: 20%;
+  color: #333;
+}
+
+#app2d .table th {
+  padding: 40px 0 8px;
+  text-align: left;
+  font-size: 18px;
+  background: none;
+}
+
+/* ===== Experience（アコーディオン: 3Dと共通の内部クラスを使用） ===== */
+.accordion2d {
+  border-radius: 4px;
+  margin: 12px 0;
+  border: 1px solid #e5e5e5;
+}
+
+/* ===== Link ===== */
+.s2d-links {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 42px;
+  padding: 26px 0 20px;
+}
+
+.s2d-links a {
+  font-size: 40px;
+  color: #333; /* 3DのLinkアイコンと同じモノトーン */
+  text-decoration: none;
+  transition: color 0.3s, transform 0.25s;
+  display: inline-flex;
+}
+
+.s2d-links a:hover {
+  color: #888;
+  transform: scale(1.12);
+}
+
+/* ===== トップへ戻るボタン（トグルと同じオレンジグラデーション）
+   body直下に置き、2Dモードのときだけ表示する ===== */
+#s2d-scrolltop {
+  display: none;
+  position: fixed;
+  bottom: 18px;
+  right: 16px;
+  z-index: 1500;
+  width: 48px;
+  height: 48px;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #ff7e5f, #feb47b);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  font-size: 18px;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: background 0.3s, transform 0.3s;
+}
+
+body.mode-2d #s2d-scrolltop {
+  display: flex;
+}
+
+#s2d-scrolltop:hover {
+  background: linear-gradient(135deg, #feb47b, #ff7e5f);
+  transform: translateY(-2px);
+}
+
+#s2d-scrolltop:active {
+  transform: translateY(1px);
+}
+
+/* ===== 2Dページのズームイン登場（3D→2D遷移時） ===== */
+#app2d.s2d-zoom-in {
+  animation: s2dZoomIn 0.75s ease-out both;
+}
+
+@keyframes s2dZoomIn {
+  from {
+    opacity: 0;
+    transform: perspective(1200px) translateZ(160px) rotateX(4deg);
+  }
+  60% {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #app2d.s2d-zoom-in {
+    animation: none;
+  }
+}
+
+/* ===== フッター ===== */
+.s2d-footer {
+  padding: 40px 0 56px;
+  text-align: center;
+}
+
+.s2d-footer p {
+  font-family: "Patrick Hand", cursive;
+  color: #555;
+  font-size: 16px;
+  margin: 4px 0;
+}
+
+/* ===== スクロールアニメーション ===== */
+.s2d-animate {
+  opacity: 0;
+  transform: translateX(-5%) translateY(4%);
+  transition: opacity 0.9s ease, transform 0.9s ease;
+}
+
+.s2d-animate.from-right {
+  transform: translateX(5%) translateY(4%);
+}
+
+.s2d-animate.in-view {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .s2d-animate {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  body.mode-2d #app2d {
+    scroll-behavior: auto;
+  }
+
+  #mode-transition,
+  #mode-transition.active {
+    transition: none;
+  }
+}
+
+/* ===== レスポンシブ ===== */
+
+/* 狭い画面ではヘッダー文字（左上）と被るので、3Dモードのトグルは
+   ヘッダー行の下（コンパスとタブの間の高さ）に下げる */
+@media (max-width: 600px) {
+  #view-toggle {
+    top: 60px;
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 768px) {
+  .s2d-appbar {
+    height: 60px;
+    padding: 0 16px;
+  }
+
+  .s2d-brand {
+    font-size: 1.5em;
+  }
+
+  body.mode-2d #view-toggle {
+    top: 11px;
+    right: 12px;
+    padding: 9px 16px;
+    font-size: 14px;
+  }
+
+  .s2d-section,
+  .s2d-hero {
+    margin: 20px 12px;
+    padding: 26px 22px 32px;
+  }
+
+  .s2d-title {
+    font-size: 30px;
+  }
+
+  .s2d-hero-text h1 {
+    font-size: 32px;
+  }
+}
+
+@media (max-width: 420px) {
+  .s2d-hero-image {
+    max-width: 200px;
+  }
+
+  .s2d-hero-name {
+    font-size: 21px;
+  }
+
+  .s2d-hero-desc {
+    font-size: 15px;
+  }
+
+  .s2d-about-item p {
+    font-size: 14px;
+  }
+
+  .s2d-chip {
+    font-size: 12px;
+  }
+
+  .s2d-links a {
+    font-size: 30px;
+  }
+
+  #app2d .table td {
+    font-size: 14px;
+  }
+}

@@ -70,6 +70,9 @@ import { initWaterRipples, updateWaterRipples } from "./waterRipples.ts";
 import { initClickMarkers, updateClickMarkers } from "./clickMarkers.ts";
 import { initXR, updateXR } from "./xr.ts";
 
+// 2D表示モード（2D⇔3D切り替え）
+import { init2DMode, is2DMode } from "./mode2d.ts";
+
 // グローバル変数の定義
 let font: Font;
 let isCameraMoving = false;
@@ -120,6 +123,7 @@ async function init() {
       setupEventListeners(),
       loadFont(),
       initOverlay(handleTabClick),
+      init2DMode(),
     ]);
     // 初期化処理が完了した時間を記録
     const endTime = Date.now();
@@ -197,7 +201,12 @@ function animate() {
   // requestAnimationFrame ではなく renderer.setAnimationLoop を用いる。
   // （非XR時も内部的に rAF で動作する）
   renderer.setAnimationLoop(() => {
-    const deltaTime = clock.getDelta();
+    // 2D表示中は3Dの更新・描画を止めて負荷を抑える（VRプレゼン中は除く）
+    if (is2DMode() && !renderer.xr.isPresenting) {
+      clock.getDelta(); // 復帰時にdeltaが跳ねないように読み捨てる
+      return;
+    }
+    const deltaTime = Math.min(clock.getDelta(), 0.1);
     const elapsedTime = clock.getElapsedTime();
     const amplitude = 1.5;
     const frequency = 1.0;

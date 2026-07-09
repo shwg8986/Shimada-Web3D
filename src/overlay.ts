@@ -11,6 +11,7 @@ export function showContent(id: string) {
   const overlay = document.getElementById("overlay");
   if (overlay) {
     overlay.classList.add("active");
+    document.body.classList.add("overlay-open"); // 表示中は2D/3DトグルをCSSで隠す
     const contents = document.querySelectorAll(".content-item");
     contents.forEach((content) => content.classList.remove("active"));
 
@@ -43,6 +44,7 @@ export function closeOverlay() {
   const overlay = document.getElementById("overlay");
   if (overlay) {
     overlay.classList.remove("active");
+    document.body.classList.remove("overlay-open");
     const contents = document.querySelectorAll(".content-item");
     contents.forEach((content) => content.classList.remove("active"));
   }

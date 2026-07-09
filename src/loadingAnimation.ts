@@ -96,22 +96,103 @@ export function hideLoadingScreen() {
   }
 }
 
-export function startIntroAnimation() {
-  const originalPosition = new THREE.Vector3(0, 20, 0); // initialCameraPosition と同じ
-  const targetPosition = new THREE.Vector3(0, 10, 0); // 目標位置
+// イントロ（カメラ落下・波揺れ）はカメラ位置を毎フレーム上書きするため、
+// ユーザーが操作を始めたら即座に中断してクリック操作を優先させる
+let introCancelled = false;
+let introRunning = false;
+let settleOnCancel = true;
 
-  let progress = 0;
-  const animateCameraIntro = () => {
-    progress += 0.005;
-    if (progress < 1) {
-      camera.position.lerpVectors(originalPosition, targetPosition, progress);
+// イントロの着地状態（2D⇔3D遷移が基準値として参照する）
+export const INTRO_LANDING = { y: 10, fov: 75 };
+
+export function isIntroRunning() {
+  return introRunning;
+}
+
+// settle=false は「後始末を呼び出し側が引き継ぐ」中断（2D⇔3D遷移用）
+export function cancelIntroAnimation(settle = true) {
+  if (introRunning) {
+    settleOnCancel = settle;
+  }
+  introCancelled = true;
+}
+
+export function startIntroAnimation() {
+  // すでにユーザーが操作を始めていたらイントロは行わない
+  // （ここでフラグをリセットすると、ロード中のクリックによるカメラ移動を
+  //   イントロが上書きしてしまう）
+  if (introCancelled) return;
+
+  // 2D→3D遷移と同じ演出:
+  // 上空・広角の状態から海面へ落下しながら、視界がすっと絞り込まれて着地する
+  const targetPosition = new THREE.Vector3(0, INTRO_LANDING.y, 0);
+  const startY = 32;
+  const baseFov = INTRO_LANDING.fov;
+  const startFov = baseFov + 32;
+  const duration = 1000;
+
+  introRunning = true;
+  // フェードで画面が見え始めるのを待ってから落下を開始する
+  // （すぐ落とすと真っ黒な画面の裏で演出が終わってしまう）
+  const revealDelay = 500;
+
+  camera.position.set(0, startY, 0);
+  camera.fov = startFov;
+  camera.updateProjectionMatrix();
+
+  let start: number | null = null;
+  const animateCameraIntro = (now: number) => {
+    if (start === null) start = now;
+    if (introCancelled) {
+      introRunning = false;
+      // 2D⇔3D遷移からの中断時は後始末を遷移側が引き継ぐ
+      if (!settleOnCancel) return;
+      // 中断時は視界と高度を素早く通常へ戻す。
+      // クリックによるカメラ移動(moveCameraTo等)はこの後に登録されるため、
+      // 同一フレーム内ではそちらの書き込みが勝ち、操作が優先される。
+      const fovAtCancel = camera.fov;
+      const yAtCancel = camera.position.y;
+      const cancelStart = performance.now();
+      const settle = (n: number) => {
+        const tt = Math.min((n - cancelStart) / 200, 1);
+        camera.fov = fovAtCancel + (baseFov - fovAtCancel) * tt;
+        camera.position.y = yAtCancel + (targetPosition.y - yAtCancel) * tt;
+        camera.updateProjectionMatrix();
+        if (tt < 1) requestAnimationFrame(settle);
+      };
+      requestAnimationFrame(settle);
+      return;
+    }
+    const t = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - t, 3); // easeOutCubic
+    camera.position.y = startY + (targetPosition.y - startY) * eased;
+    camera.fov = startFov + (baseFov - startFov) * eased;
+    camera.updateProjectionMatrix();
+    if (t < 1) {
       requestAnimationFrame(animateCameraIntro);
     } else {
+      camera.position.copy(targetPosition);
       startWaveAnimation();
     }
   };
 
-  animateCameraIntro();
+  window.setTimeout(() => {
+    if (introCancelled) {
+      introRunning = false;
+      // 2D⇔3D遷移からの中断時は後始末を遷移側が引き継ぐ
+      if (!settleOnCancel) return;
+      // 落下開始前に操作された場合は視界を通常へ戻す
+      camera.fov = baseFov;
+      camera.updateProjectionMatrix();
+      // クリックによるカメラ移動が始まっていない（=初期上空のまま）ときだけ着地させる。
+      // すでに球体等へ移動済みの場合に位置を触ると、カメラが引き戻されてしまう。
+      if (Math.abs(camera.position.y - startY) < 0.001) {
+        camera.position.copy(targetPosition);
+      }
+      return;
+    }
+    requestAnimationFrame(animateCameraIntro);
+  }, revealDelay);
 }
 
 function startWaveAnimation() {
@@ -121,6 +202,10 @@ function startWaveAnimation() {
   let time = 0;
 
   const animateWave = () => {
+    if (introCancelled) {
+      introRunning = false;
+      return;
+    }
     time += 1;
     const newY = baseY + Math.sin(time * frequency) * amplitude;
     camera.position.setY(newY);
@@ -128,6 +213,8 @@ function startWaveAnimation() {
     if (time < 60) {
       // 約1秒間（60FPS * 1秒）
       requestAnimationFrame(animateWave);
+    } else {
+      introRunning = false;
     }
   };
 

@@ -24,7 +24,7 @@ let currentMode: ViewMode = "3d";
 let isTransitioning = false;
 
 const profileImageUrl = new URL(
-  "../images/ProfileImage2.jpg",
+  "../images/NEDO Challenge Season1.jpg",
   import.meta.url
 ).toString();
 

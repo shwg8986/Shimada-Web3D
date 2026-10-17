@@ -326,6 +326,169 @@ body.mode-2d #app2d {
   background: none;
 }
 
+.s2d-award-program {
+  margin: 0 0 12px;
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.s2d-award-details {
+  padding-left: 22px;
+}
+
+.s2d-award-details li {
+  margin: 12px 0;
+  line-height: 1.6;
+}
+
+.s2d-award-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  margin-bottom: 4px;
+}
+
+.s2d-certificate-open {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  gap: 7px;
+  min-height: 36px;
+  padding: 7px 14px;
+  border: 1px solid #d4dce4;
+  border-radius: 8px;
+  background: #fff;
+  color: #34465a;
+  box-shadow: 0 1px 2px #14283c0a;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.5;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+}
+
+.s2d-certificate-open:hover {
+  background: #f5f8fb;
+  border-color: #94a6b8;
+  box-shadow: 0 2px 5px #14283c12;
+}
+
+.s2d-certificate-open:active {
+  background: #eaf0f5;
+  box-shadow: none;
+}
+
+.s2d-certificate-open:focus-visible {
+  outline: 2px solid #1769aa;
+  outline-offset: 3px;
+}
+
+.s2d-certificate {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: #101720;
+  color: #f3f6fa;
+  box-sizing: border-box;
+}
+
+.s2d-certificate[open] {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+.s2d-certificate-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 24px;
+  border-bottom: 1px solid #ffffff20;
+}
+
+.s2d-certificate-toolbar p {
+  margin: 0 0 4px;
+  color: #a9bbce;
+  font-size: 12px;
+}
+
+.s2d-certificate-toolbar h3 {
+  margin: 0;
+  font-size: clamp(14px, 2vw, 18px);
+  line-height: 1.5;
+}
+
+.s2d-certificate-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-shrink: 0;
+}
+
+.s2d-certificate-actions a {
+  color: #c7def5;
+  font-size: 13px;
+}
+
+.s2d-certificate form {
+  margin: 0;
+}
+
+.s2d-certificate-close {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid #ffffff40;
+  border-radius: 50%;
+  background: #ffffff10;
+  color: #fff;
+  font: 28px/1 Arial, sans-serif;
+  cursor: pointer;
+}
+
+.s2d-certificate-close:hover {
+  background: #ffffff30;
+}
+
+.s2d-certificate-stage {
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(12px, 3vw, 36px);
+}
+
+.s2d-certificate img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+@media (max-width: 600px) {
+  .s2d-certificate-toolbar {
+    padding: 12px;
+    flex-wrap: wrap;
+  }
+
+  .s2d-certificate-actions {
+    margin-left: auto;
+  }
+}
+
 /* ===== Experience（アコーディオン: 3Dと共通の内部クラスを使用） ===== */
 .accordion2d {
   border-radius: 4px;

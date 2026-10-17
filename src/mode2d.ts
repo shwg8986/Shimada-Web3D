@@ -28,6 +28,11 @@ const profileImageUrl = new URL(
   import.meta.url
 ).toString();
 
+const awardCertificateUrl = new URL(
+  "../images/NEDO Challnge Season1 Awards certificate.jpg",
+  import.meta.url
+).toString();
+
 export function is2DMode(): boolean {
   return currentMode === "2d";
 }
@@ -88,7 +93,12 @@ const certifications: [string, string][] = [
 const awards: [string, string][] = [
   [
     "2026",
-    "Best Poster 3rd - NEDO量子懸賞金事業 Season1 第二回研究開発討議会",
+    `<h3 class="s2d-award-program">NEDO懸賞金活用型プログラム「量子コンピュータを用いた社会問題ソリューション開発」Season1</h3>
+      <p>チーム「Q-Chainners」<br>ゲート型量子コンピューティング技術を活用したハッシュ生成とブロックチェーンへの応用。</p>
+      <ul class="s2d-award-details">
+        <li><div class="s2d-award-heading"><a href="https://www.nedo.go.jp/news/press/AA5_101974.html" target="_blank" rel="noopener noreferrer">Society 5.0領域 第3位（懸賞金1,000万円）</a><button type="button" class="s2d-certificate-open" aria-haspopup="dialog" aria-controls="s2d-certificate"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg><span>賞状</span></button></div><span>2026年10月</span></li>
+        <li>Best Poster 3rd — 第二回研究開発討議会<br><span>2026年5月</span></li>
+      </ul>`,
   ],
   [
     "2024",
@@ -213,6 +223,18 @@ function buildPage(): HTMLDivElement {
       <h2 class="s2d-title">Awards</h2>
       <p class="s2d-subtitle">ー 受賞 ー</p>
       <table class="table">${tableRows(awards)}</table>
+      <dialog id="s2d-certificate" class="s2d-certificate" aria-label="NEDO Challenge Season1の賞状">
+        <header class="s2d-certificate-toolbar">
+          <div><p>Q-Chainners · Season1</p><h3>Society 5.0領域 第3位 — 賞状</h3></div>
+          <div class="s2d-certificate-actions">
+            <a href="${awardCertificateUrl}" target="_blank" rel="noopener noreferrer">元の画像を開く ↗</a>
+            <form method="dialog"><button class="s2d-certificate-close" aria-label="賞状を閉じる" autofocus>×</button></form>
+          </div>
+        </header>
+        <div class="s2d-certificate-stage">
+          <img src="${awardCertificateUrl}" alt="Q-Chainners NEDO Challenge Season1 Society 5.0領域 第3位の賞状" loading="lazy" />
+        </div>
+      </dialog>
     </section>
 
     <section id="s2d-link" class="s2d-section s2d-animate">
@@ -233,6 +255,18 @@ function buildPage(): HTMLDivElement {
       <p>All rights reserved.</p>
     </footer>
   `;
+  const certificate = app2d.querySelector<HTMLDialogElement>("#s2d-certificate")!;
+  app2d.querySelector(".s2d-certificate-open")?.addEventListener("click", () => {
+    certificate.showModal();
+  });
+  certificate.addEventListener("click", (event) => {
+    if (event.target !== certificate) return;
+    const bounds = certificate.getBoundingClientRect();
+    if (event.clientX < bounds.left || event.clientX > bounds.right ||
+        event.clientY < bounds.top || event.clientY > bounds.bottom) {
+      certificate.close();
+    }
+  });
   return app2d;
 }
 

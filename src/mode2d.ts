@@ -68,6 +68,21 @@ const hobbies = [
   { icon: "fa-solid fa-moon", label: "夜景・海を眺めること" },
 ];
 
+const articles = [
+  {
+    title: "量子技術分野最大の国際会議 IEEE Quantum Week 2026 参加レポート",
+    date: "2026-10-08",
+    label: "2026年10月8日",
+    url: "https://tech-note.kddi.com/n/nf18c6d068d93",
+  },
+  {
+    title: "量子コンピュータを活用したブロックチェーン -NEDO Challenge-",
+    date: "2026-06-16",
+    label: "2026年6月16日",
+    url: "https://tech-note.kddi.com/n/n2eb577f7d4d8",
+  },
+];
+
 const certifications: [string, string][] = [
   ["2026/2", "TOEIC L&R IP Test Total Score 825"],
   [
@@ -215,6 +230,18 @@ function buildPage(): HTMLDivElement {
       <h2 class="s2d-title">Publication</h2>
       <p class="s2d-subtitle">ー 研究業績 ー</p>
       <div id="s2d-publication-body"></div>
+    </section>
+
+    <section id="s2d-articles" class="s2d-section s2d-animate">
+      <h2 class="s2d-title">Articles</h2>
+      <p class="s2d-subtitle">ー 執筆記事 ー</p>
+      <div class="s2d-articles">
+        ${articles.map((article) => `
+          <a class="s2d-article" href="${article.url}" target="_blank" rel="noopener noreferrer">
+            <div class="s2d-article-meta"><span>KDDI Tech note</span><time datetime="${article.date}">${article.label}</time></div>
+            <h3>${article.title}<span class="s2d-article-arrow" aria-hidden="true">↗</span></h3>
+          </a>`).join("")}
+      </div>
     </section>
 
     <section id="s2d-certifications" class="s2d-section s2d-animate">

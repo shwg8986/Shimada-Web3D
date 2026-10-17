@@ -42,15 +42,19 @@ export function is2DMode(): boolean {
 const aboutMeItems = [
   {
     icon: "fa-solid fa-flask s2d-icon-science",
-    text: "大学[院]では、VR × 人間情報学の分野で研究に取り組んでおりました。現在は量子コンピューティングおよびブロックチェーンの研究開発を行っています。",
+    text: "大学・大学院では、VRと人間情報学をテーマに研究していました。現在は量子コンピューティングとブロックチェーンの研究開発に携わり、チーム「Q-Chainners」で量子技術の活用に取り組んでいます。",
+  },
+  {
+    icon: "fa-solid fa-diagram-project s2d-icon-science",
+    text: '具体的には、ゲート型量子コンピュータを用いてハッシュを生成する技術を開発し、ブロックチェーンへの応用を進めています。<a href="https://www.nedo.go.jp/news/press/AA5_101974.html" target="_blank" rel="noopener noreferrer">2026年10月には、NEDOの量子懸賞金事業 Season1でSociety 5.0領域 第3位を受賞しました。</a>',
   },
   {
     icon: "fa-solid fa-code s2d-icon-code",
-    text: "リアルタイムに視覚的なフィードバックが得られるものが好きで、開発ではフロントエンド側の実装を特に楽しんでいます。",
+    text: "開発では、自分の書いたコードが画面上の動きや見た目に反映されるのが好きで、特にフロントエンドの実装を楽しんでいます。このサイトもその延長で、Three.jsによる3D表現や、2D・3Dを切り替えられる仕組みを作っています。",
   },
   {
     icon: "fa-solid fa-compass s2d-icon-explore",
-    text: "今後は3Dモデリングの知識も身につけていきたいと考えています。",
+    text: "これからは3Dモデリングも学び、表現の幅を広げていきたいと考えています。",
   },
 ];
 

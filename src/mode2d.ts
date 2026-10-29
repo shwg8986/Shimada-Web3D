@@ -28,10 +28,42 @@ const profileImageUrl = new URL(
   import.meta.url
 ).toString();
 
-const awardCertificateUrl = new URL(
-  "../images/NEDO Challnge Season1 Awards certificate.jpg",
-  import.meta.url
-).toString();
+// Awardsの「賞状」ボタンで開く画像。キーはボタンの data-certificate と対応
+const certificates = {
+  nedo: {
+    url: new URL(
+      "../images/NEDO Challnge Season1 Awards certificate.jpg",
+      import.meta.url
+    ).toString(),
+    caption: "Q-Chainners · Season1",
+    title: "Society 5.0領域 第3位 — 賞状",
+    alt: "Q-Chainners NEDO Challenge Season1 Society 5.0領域 第3位の賞状",
+  },
+  aivr: {
+    url: new URL(
+      "../images/Best Paper Award - AIVR2024.jpg",
+      import.meta.url
+    ).toString(),
+    caption: "AIVR2024 · Fukuoka, Japan",
+    title: "Best Paper Award — 賞状",
+    alt: "AIVR2024 Best Paper Award の賞状",
+  },
+  academic: {
+    url: new URL(
+      "../images/Academic Excellence Award.jpg",
+      import.meta.url
+    ).toString(),
+    caption: "東京都立大学 · 2021年度",
+    title: "成績優秀者表彰",
+    alt: "東京都立大学 2021年度 成績優秀者表彰の表彰状ホルダー",
+  },
+};
+
+type CertificateKey = keyof typeof certificates;
+
+function certificateButton(key: CertificateKey, label = "賞状"): string {
+  return `<button type="button" class="s2d-certificate-open" data-certificate="${key}" aria-haspopup="dialog" aria-controls="s2d-certificate"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg><span>${label}</span></button>`;
+}
 
 export function is2DMode(): boolean {
   return currentMode === "2d";
@@ -46,7 +78,7 @@ const aboutMeItems = [
   },
   {
     icon: "fa-solid fa-diagram-project s2d-icon-science",
-    text: '具体的には、ゲート型量子コンピュータを用いてハッシュを生成する技術を開発し、ブロックチェーンへの応用を進めています。<a href="https://www.nedo.go.jp/news/press/AA5_101974.html" target="_blank" rel="noopener noreferrer">2026年10月には、NEDOの量子懸賞金事業 Season1でSociety 5.0領域 第3位を受賞しました。</a>',
+    text: "具体的には、ゲート型量子コンピュータを用いてハッシュを生成する技術を開発し、ブロックチェーンへの応用を進めています。2026年10月には、国（NEDO・経済産業省）が主催する量子コンピュータの研究開発コンテストで第3位を受賞しました。",
   },
   {
     icon: "fa-solid fa-code s2d-icon-code",
@@ -70,13 +102,23 @@ const hobbies = [
 
 const articles = [
   {
+    title:
+      "「NEDO懸賞金活用型プログラム／量子コンピュータを用いた社会問題ソリューション開発」のSociety 5.0領域で第3位を受賞",
+    source: "KDDI総合研究所 トピックス",
+    date: "2026-10-29",
+    label: "2026年10月29日",
+    url: "https://www.kddi-research.jp/topics/2026/102901.html",
+  },
+  {
     title: "量子技術分野最大の国際会議 IEEE Quantum Week 2026 参加レポート",
+    source: "KDDI Tech note",
     date: "2026-10-08",
     label: "2026年10月8日",
     url: "https://tech-note.kddi.com/n/nf18c6d068d93",
   },
   {
     title: "量子コンピュータを活用したブロックチェーン -NEDO Challenge-",
+    source: "KDDI Tech note",
     date: "2026-06-16",
     label: "2026年6月16日",
     url: "https://tech-note.kddi.com/n/n2eb577f7d4d8",
@@ -115,15 +157,18 @@ const awards: [string, string][] = [
     `<h3 class="s2d-award-program">NEDO懸賞金活用型プログラム「量子コンピュータを用いた社会問題ソリューション開発」Season1</h3>
       <p>チーム「Q-Chainners」<br>ゲート型量子コンピューティング技術を活用したハッシュ生成とブロックチェーンへの応用。</p>
       <ul class="s2d-award-details">
-        <li><div class="s2d-award-heading"><a href="https://www.nedo.go.jp/news/press/AA5_101974.html" target="_blank" rel="noopener noreferrer">Society 5.0領域 第3位（懸賞金1,000万円）</a><button type="button" class="s2d-certificate-open" aria-haspopup="dialog" aria-controls="s2d-certificate"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg><span>賞状</span></button></div><span>2026年10月</span></li>
+        <li><div class="s2d-award-heading"><a href="https://www.nedo.go.jp/news/press/AA5_101974.html" target="_blank" rel="noopener noreferrer">Society 5.0領域 第3位（懸賞金1,000万円）</a>${certificateButton("nedo")}</div><span>2026年10月</span></li>
         <li>Best Poster 3rd — 第二回研究開発討議会<br><span>2026年5月</span></li>
       </ul>`,
   ],
   [
     "2024",
-    "Best Paper Award - 2024 8th International Conference on Artificial intelligence and Virtual Reality (AIVR2024)",
+    `<div class="s2d-award-heading"><a href="https://www.sd.tmu.ac.jp/news/prize/11808.html" target="_blank" rel="noopener noreferrer">Best Paper Award - 2024 8th International Conference on Artificial intelligence and Virtual Reality (AIVR2024)</a>${certificateButton("aivr")}</div>`,
   ],
-  ["2021", "東京都立大学 情報科学科 成績優秀者表彰"],
+  [
+    "2021",
+    `<div class="s2d-award-heading"><span>東京都立大学 情報科学科 成績優秀者表彰</span>${certificateButton("academic", "写真")}</div>`,
+  ],
 ];
 
 const links = [
@@ -238,7 +283,7 @@ function buildPage(): HTMLDivElement {
       <div class="s2d-articles">
         ${articles.map((article) => `
           <a class="s2d-article" href="${article.url}" target="_blank" rel="noopener noreferrer">
-            <div class="s2d-article-meta"><span>KDDI Tech note</span><time datetime="${article.date}">${article.label}</time></div>
+            <div class="s2d-article-meta"><span>${article.source}</span><time datetime="${article.date}">${article.label}</time></div>
             <h3>${article.title}<span class="s2d-article-arrow" aria-hidden="true">↗</span></h3>
           </a>`).join("")}
       </div>
@@ -254,16 +299,16 @@ function buildPage(): HTMLDivElement {
       <h2 class="s2d-title">Awards</h2>
       <p class="s2d-subtitle">ー 受賞 ー</p>
       <table class="table">${tableRows(awards)}</table>
-      <dialog id="s2d-certificate" class="s2d-certificate" aria-label="NEDO Challenge Season1の賞状">
+      <dialog id="s2d-certificate" class="s2d-certificate" aria-labelledby="s2d-certificate-title">
         <header class="s2d-certificate-toolbar">
-          <div><p>Q-Chainners · Season1</p><h3>Society 5.0領域 第3位 — 賞状</h3></div>
+          <div><p class="s2d-certificate-caption"></p><h3 id="s2d-certificate-title"></h3></div>
           <div class="s2d-certificate-actions">
-            <a href="${awardCertificateUrl}" target="_blank" rel="noopener noreferrer">元の画像を開く ↗</a>
-            <form method="dialog"><button class="s2d-certificate-close" aria-label="賞状を閉じる" autofocus>×</button></form>
+            <a class="s2d-certificate-link" target="_blank" rel="noopener noreferrer">元の画像を開く ↗</a>
+            <form method="dialog"><button class="s2d-certificate-close" aria-label="閉じる" autofocus>×</button></form>
           </div>
         </header>
         <div class="s2d-certificate-stage">
-          <img src="${awardCertificateUrl}" alt="Q-Chainners NEDO Challenge Season1 Society 5.0領域 第3位の賞状" loading="lazy" />
+          <img alt="" />
         </div>
       </dialog>
     </section>
@@ -287,8 +332,17 @@ function buildPage(): HTMLDivElement {
     </footer>
   `;
   const certificate = app2d.querySelector<HTMLDialogElement>("#s2d-certificate")!;
-  app2d.querySelector(".s2d-certificate-open")?.addEventListener("click", () => {
-    certificate.showModal();
+  app2d.querySelectorAll<HTMLButtonElement>(".s2d-certificate-open").forEach((button) => {
+    button.addEventListener("click", () => {
+      const data = certificates[button.dataset.certificate as CertificateKey];
+      certificate.querySelector(".s2d-certificate-caption")!.textContent = data.caption;
+      certificate.querySelector("#s2d-certificate-title")!.textContent = data.title;
+      certificate.querySelector<HTMLAnchorElement>(".s2d-certificate-link")!.href = data.url;
+      const image = certificate.querySelector<HTMLImageElement>(".s2d-certificate-stage img")!;
+      image.src = data.url;
+      image.alt = data.alt;
+      certificate.showModal();
+    });
   });
   certificate.addEventListener("click", (event) => {
     if (event.target !== certificate) return;

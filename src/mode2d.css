@@ -403,18 +403,14 @@ body.mode-2d #app2d {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  gap: 7px;
-  min-height: 36px;
-  padding: 7px 14px;
+  width: 36px;
+  height: 36px;
+  padding: 0;
   border: 1px solid #d4dce4;
   border-radius: 8px;
   background: #fff;
   color: #34465a;
   box-shadow: 0 1px 2px #14283c0a;
-  font: inherit;
-  font-size: 13px;
-  font-weight: 500;
-  line-height: 1.5;
   cursor: pointer;
   transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
 }
@@ -458,35 +454,8 @@ body.mode-2d #app2d {
 
 .s2d-certificate-toolbar {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 16px 24px;
-  border-bottom: 1px solid #ffffff20;
-}
-
-.s2d-certificate-toolbar p {
-  margin: 0 0 4px;
-  color: #a9bbce;
-  font-size: 12px;
-}
-
-.s2d-certificate-toolbar h3 {
-  margin: 0;
-  font-size: clamp(14px, 2vw, 18px);
-  line-height: 1.5;
-}
-
-.s2d-certificate-actions {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  flex-shrink: 0;
-}
-
-.s2d-certificate-actions a {
-  color: #c7def5;
-  font-size: 13px;
+  justify-content: flex-end;
+  padding: 16px 24px 0;
 }
 
 .s2d-certificate form {
@@ -528,12 +497,7 @@ body.mode-2d #app2d {
 
 @media (max-width: 600px) {
   .s2d-certificate-toolbar {
-    padding: 12px;
-    flex-wrap: wrap;
-  }
-
-  .s2d-certificate-actions {
-    margin-left: auto;
+    padding: 12px 12px 0;
   }
 }
 

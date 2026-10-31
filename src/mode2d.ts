@@ -24,19 +24,17 @@ let currentMode: ViewMode = "3d";
 let isTransitioning = false;
 
 const profileImageUrl = new URL(
-  "../images/NEDO Challenge Season1.jpg",
+  "../images/ProfileImage.jpg",
   import.meta.url
 ).toString();
 
-// Awardsの「賞状」ボタンで開く画像。キーはボタンの data-certificate と対応
+// Awardsのアイコンボタンで開く画像。キーはボタンの data-certificate と対応
 const certificates = {
   nedo: {
     url: new URL(
       "../images/NEDO Challnge Season1 Awards certificate.jpg",
       import.meta.url
     ).toString(),
-    caption: "Q-Chainners · Season1",
-    title: "Society 5.0領域 第3位 — 賞状",
     alt: "Q-Chainners NEDO Challenge Season1 Society 5.0領域 第3位の賞状",
   },
   aivr: {
@@ -44,8 +42,6 @@ const certificates = {
       "../images/Best Paper Award - AIVR2024.jpg",
       import.meta.url
     ).toString(),
-    caption: "AIVR2024 · Fukuoka, Japan",
-    title: "Best Paper Award — 賞状",
     alt: "AIVR2024 Best Paper Award の賞状",
   },
   academic: {
@@ -53,8 +49,6 @@ const certificates = {
       "../images/Academic Excellence Award.jpg",
       import.meta.url
     ).toString(),
-    caption: "東京都立大学 · 2021年度",
-    title: "成績優秀者表彰",
     alt: "東京都立大学 2021年度 成績優秀者表彰の表彰状ホルダー",
   },
 };
@@ -62,7 +56,7 @@ const certificates = {
 type CertificateKey = keyof typeof certificates;
 
 function certificateButton(key: CertificateKey, label = "賞状"): string {
-  return `<button type="button" class="s2d-certificate-open" data-certificate="${key}" aria-haspopup="dialog" aria-controls="s2d-certificate"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg><span>${label}</span></button>`;
+  return `<button type="button" class="s2d-certificate-open" data-certificate="${key}" aria-label="${label}を表示" aria-haspopup="dialog" aria-controls="s2d-certificate"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg></button>`;
 }
 
 export function is2DMode(): boolean {
@@ -299,13 +293,9 @@ function buildPage(): HTMLDivElement {
       <h2 class="s2d-title">Awards</h2>
       <p class="s2d-subtitle">ー 受賞 ー</p>
       <table class="table">${tableRows(awards)}</table>
-      <dialog id="s2d-certificate" class="s2d-certificate" aria-labelledby="s2d-certificate-title">
+      <dialog id="s2d-certificate" class="s2d-certificate" aria-label="受賞の賞状・写真">
         <header class="s2d-certificate-toolbar">
-          <div><p class="s2d-certificate-caption"></p><h3 id="s2d-certificate-title"></h3></div>
-          <div class="s2d-certificate-actions">
-            <a class="s2d-certificate-link" target="_blank" rel="noopener noreferrer">元の画像を開く ↗</a>
-            <form method="dialog"><button class="s2d-certificate-close" aria-label="閉じる" autofocus>×</button></form>
-          </div>
+          <form method="dialog"><button class="s2d-certificate-close" aria-label="戻る" autofocus>×</button></form>
         </header>
         <div class="s2d-certificate-stage">
           <img alt="" />
@@ -335,9 +325,6 @@ function buildPage(): HTMLDivElement {
   app2d.querySelectorAll<HTMLButtonElement>(".s2d-certificate-open").forEach((button) => {
     button.addEventListener("click", () => {
       const data = certificates[button.dataset.certificate as CertificateKey];
-      certificate.querySelector(".s2d-certificate-caption")!.textContent = data.caption;
-      certificate.querySelector("#s2d-certificate-title")!.textContent = data.title;
-      certificate.querySelector<HTMLAnchorElement>(".s2d-certificate-link")!.href = data.url;
       const image = certificate.querySelector<HTMLImageElement>(".s2d-certificate-stage img")!;
       image.src = data.url;
       image.alt = data.alt;
